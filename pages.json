@@ -1,0 +1,87 @@
+{
+    "pages" : [
+        {
+            "path" : "pages/index/index",
+            "style" : {
+                "navigationBarTitleText" : "iman"
+            }
+        },
+        {
+            "path" : "pages/collect/collect",
+            "style" : {
+                "navigationBarTitleText" : "iman"
+            }
+        },
+        {
+            "path" : "pages/my/my",
+            "style" : {
+                "navigationBarTitleText" : "我的"
+            }
+        },
+        {
+            "path" : "pages/type/type",
+            "style" : {
+                "navigationBarTitleText" : "分类"
+            }
+        },
+        {
+            "path" : "pages/notice/notice",
+            "style" : {
+				"navigationBarTitleText" : "通知中心"
+			}
+        }
+    ],
+    "condition" : {
+        "current" : 0,
+        "list" : [
+            {
+                "name" : "index",
+                "path" : "pages/index/index"
+            },
+            {
+                "name" : "type",
+                "path" : "pages/type/type"
+            },
+            {
+                "name" : "my",
+                "path" : "pages/my/my"
+            },
+            {
+                "name" : "notice",
+                "path" : "pages/notice/notice"
+            }
+        ]
+    },
+    "globalStyle" : {
+        "navigationBarTextStyle" : "white",
+        "navigationBarTitleText" : "iman",
+        "navigationBarBackgroundColor" : "#3C424B",
+        "backgroundColor" : "#3C424B"
+    },
+    "tabBar" : {
+        "color" : "#3C424B",
+        "selectedColor" : "#D1513B",
+        "borderStyle" : "black",
+        "backgroundColor" : "#ffffff",
+        "list" : [
+            {
+                "pagePath" : "pages/index/index",
+                "iconPath" : "static/img/tab_find.png",
+                "selectedIconPath" : "static/img/tab_find_selected.png",
+                "text" : "发现"
+            },
+            {
+                "pagePath" : "pages/type/type",
+                "iconPath" : "static/img/tab_ty.png",
+                "selectedIconPath" : "static/img/tab_ty_selected.png",
+                "text" : "分类"
+            },
+            {
+                "pagePath" : "pages/my/my",
+                "iconPath" : "static/img/tab_my.png",
+                "selectedIconPath" : "static/img/tab_my_selected.png",
+                "text" : "我的"
+            }
+        ]
+    }
+}
