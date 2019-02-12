@@ -27,8 +27,16 @@
         {
             "path" : "pages/notice/notice",
             "style" : {
-				"navigationBarTitleText" : "通知中心"
-			}
+                "navigationBarTitleText" : "通知中心"
+            }
+        },
+        {
+            "path" : "pages/comic-info/comic-info",
+            "style" : {}
+        },
+        {
+            "path" : "pages/comic-detail/comic-detail",
+            "style" : {}
         }
     ],
     "condition" : {
@@ -49,6 +57,11 @@
             {
                 "name" : "notice",
                 "path" : "pages/notice/notice"
+            },
+            {
+                "name" : "comic-info",
+                "path" : "pages/comic-info/comic-info",
+                "query" : "detailData={\"comic_id\":\"6\",\"title\":\"21世纪大地震\"}"
             }
         ]
     },

@@ -54,4 +54,16 @@
 		color: #D1513B;
 		border-bottom: 2px solid #D1513B;
 	}
+	
+	.login-btn{
+	    position: fixed;
+	    top: 0;
+	    bottom: 0;
+	    left: 0;
+	    right: 0;
+	    background: none;
+	}
+	.login-btn:after{
+	    border: 0;
+	}
 </style>

@@ -27,44 +27,21 @@
 
 		<!-- 浏览历史 -->
 		<view class="list history" v-show="tabIndex == 1">
-			<view class="list-item">
+			<view class="list-item" v-for="(comic,index) in historyData" :key="index" @tap="reading(comic)">
 				<view class="list-cover">
-					<image src="../../static/img/head.jpg" mode="widthFix"></image>
+					<image :src="comic.head" mode="widthFix"></image>
 				</view>
 				<view class="list-content">
 					<view class="title">
-						名侦探柯南
+						{{comic.title}}
 					</view>
 					<view class="content">
 						<view class="left">
 							<view class="brief">
-								第二十五章 战前准备 <text>已读30%</text>
+								第{{comic.chapter_name}}章 {{comic.chapter_title?comic.chapter_title:''}} <text>已读{{comic.rate}}%</text>
 							</view>
 							<view class="progress">
-								<progress percent="30" stroke-width="1" activeColor="#D1513B" backgroundColor="#DDD" />
-							</view>
-						</view>
-						<view class="right">
-							<button type="primary">续看</button>
-						</view>
-					</view>
-				</view>
-			</view>
-			<view class="list-item">
-				<view class="list-cover">
-					<image src="../../static/img/head.jpg" mode="widthFix"></image>
-				</view>
-				<view class="list-content">
-					<view class="title">
-						名侦探柯南
-					</view>
-					<view class="content">
-						<view class="left">
-							<view class="brief">
-								第二十五章 战前准备 <text>已读30%</text>
-							</view>
-							<view class="progress">
-								<progress percent="30" stroke-width="1" activeColor="#D1513B" backgroundColor="#DDD" />
+								<progress :percent="comic.rate" stroke-width="1" activeColor="#D1513B" backgroundColor="#DDD" />
 							</view>
 						</view>
 						<view class="right">
@@ -128,13 +105,72 @@
 </template>
 
 <script>
+    import service from '../../service.js';
 	export default {
 		data() {
 			return {
-				tabIndex: 2,
+				tabIndex: 1,
+				openid: '',
+				historyData: []
 			};
 		},
+		onLoad() {
+			let _this = this;
+			let readerInfo = service.getUsers();
+			this.openid = readerInfo.openid;
+			wx.getSetting({
+				// 检查权限
+				success (res){
+					if (res.authSetting['scope.userInfo']) {
+			            _this.authed = true;
+						_this.readerInfo = readerInfo;
+					}
+				}
+			})
+			this.getHistory()
+		},
 		methods: {
+			getHistory() {
+			    uni.request({
+			    	url: this.$requestUrl+'Comic/get_history_info',
+			    	method: 'GET',
+			    	data: {
+			            openid: this.openid
+			        },
+			    	success: res => {
+			            this.historyData = res.data.data;
+			        },
+			    	fail: () => {},
+			    	complete: () => {
+			            uni.hideLoading();
+			            uni.stopPullDownRefresh();
+			        }
+			    });
+			},
+			reading(e) {
+			    console.log(e);
+				uni.request({
+					url: this.$requestUrl+'Comic/get_reading_chapter',
+					method: 'GET',
+					data: {
+						comic_id: e.comic_id,
+						openid: this.openid
+					},
+					success: res => {
+						let detail = {
+							comic_id: e.comic_id,
+							title: e.title,
+							cover: e.cover,
+							chapter: res.data.data
+						}
+						uni.navigateTo({
+							url: "../comic-detail/comic-detail?detailData=" + JSON.stringify(detail)
+						})
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
 			showHistory() {
 				this.tabIndex = 1;
 			},

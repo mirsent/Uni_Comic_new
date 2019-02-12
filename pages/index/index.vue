@@ -8,106 +8,71 @@
 				画册
 			</view>
 		</view>
-		
+
 		<!-- 发现 -->
 		<view v-show="tabIndex == 1" class="wrap find">
 
-			<view class="card card-3">
+			<!-- 最新漫画 -->
+			<view class="card card-3" @tap="goInfo(newComicInfo)">
 				<view class="cover">
-					<image src="../../static/img/new_bg.png" mode="widthFix"></image>
+					<image :src="newComicInfo.cover"></image>
 				</view>
 				<view class="content">
 					<view class="title text-2-ellipsis">
-						名侦探柯南
+						{{newComicInfo.title}}
 					</view>
 					<view class="brief text-2-ellipsis">
-						高中生侦探工藤新一，被称为“日本警察的救世主”，“平成年代的福尔摩斯”。
+						<rich-text :nodes="newComicInfo.brief"></rich-text>
 					</view>
 				</view>
 			</view>
 
 			<!-- 推荐 -->
-			<view class="recommend">
+			<view class="recommend" v-for="(comic,index) in recommendComicData" :key="index" @tap="goInfo(comic)">
 				<view class="card cover">
-					<image src="../../static/img/recommend.jpg" mode="widthFix"></image>
+					<image :src="comic.cover" mode="widthFix"></image>
 				</view>
 				<view class="body">
 					<view class="head">
-						<image src="../../static/img/head.jpg"></image>
+						<image :src="comic.head"></image>
 					</view>
 					<view class="content">
 						<view class="top">
 							<view class="title">
-								漆黑的追踪者
+								{{comic.title}}
 							</view>
 							<view class="view">
 								<image src="../../static/img/fire.png"></image>
-								<text>982</text>
+								<text>{{comic.popularity}}</text>
 							</view>
 						</view>
 						<view class="brief text-ellipsis">
-							漆黑的追踪者是《名侦探柯南》第13部剧场版，讲述东京发生的6起连环杀人案件，警视厅高度重视，并慢慢揭开了凶手的阴谋，当爱尔兰的出场才是整部剧的高潮。
+							{{comic.brief}}
 						</view>
 					</view>
 				</view>
 			</view>
-
-			<view class="recommend">
-				<view class="card cover">
-					<image src="../../static/img/recommend2.jpg" mode="widthFix"></image>
-				</view>
-				<view class="body">
-					<view class="head">
-						<image src="../../static/img/head.jpg"></image>
-					</view>
+			
+			<!-- 专题 -->
+			<view v-for="(comic,index) in subjectComicData" :key="index">
+				<view class="card subject">
 					<view class="content">
 						<view class="top">
-							<view class="title">
-								第11个前锋
-							</view>
-							<view class="view">
-								<image src="../../static/img/fire.png"></image>
-								<text>1023</text>
+							<view class="top-box">
+								<image v-for="(img,i) in comic.top" :key="i" :src="img"></image>
 							</view>
 						</view>
-						<view class="brief text-ellipsis">
-							第11个前锋是《名侦探柯南》第16部，讲述了毛利小五郎接收到一个神秘的爆炸预告电话，柯南为了阻止爆炸事件的发生，因此对谜题发出挑战并揭开谜底。
+						<view class="bottom">
+							<view class="top-box" style="margin-left: -100upx;">
+								<image v-for="(img,i) in comic.bottom" :key="i" :src="img"></image>
+							</view>
 						</view>
 					</view>
 				</view>
-			</view>
-
-			<view class="card subject">
-				<view class="content">
-					<view class="top">
-						<view class="top-box">
-							<image src="../../static/img/timg1.jpg"></image>
-							<image src="../../static/img/timg2.jpg"></image>
-							<image src="../../static/img/timg3.jpg"></image>
-							<image src="../../static/img/timg4.jpg"></image>
-							<image src="../../static/img/timg1.jpg"></image>
-							<image src="../../static/img/timg2.jpg"></image>
-							<image src="../../static/img/timg3.jpg"></image>
-							<image src="../../static/img/timg4.jpg"></image>
-						</view>
-					</view>
-					<view class="bottom">
-						<view class="top-box" style="margin-left: -100upx;">
-							<image src="../../static/img/timg5.jpg"></image>
-							<image src="../../static/img/timg6.jpg"></image>
-							<image src="../../static/img/timg7.jpg"></image>
-							<image src="../../static/img/timg.jpg"></image>
-							<image src="../../static/img/timg5.jpg"></image>
-							<image src="../../static/img/timg6.jpg"></image>
-							<image src="../../static/img/timg7.jpg"></image>
-							<image src="../../static/img/timg.jpg"></image>
-						</view>
-					</view>
+				
+				<view class="subject-title">
+					专题推荐：{{comic.subject_name}}
 				</view>
-			</view>
-
-			<view class="subject-title">
-				专题推荐：70/80回忆 小人书
 			</view>
 
 			<view class="item update">
@@ -115,59 +80,15 @@
 					最近更新
 				</view>
 				<view class="item-list">
-					<view class="cell">
+					<view class="cell" v-for="(comic, index) in newComicData" :key="index" @tap="goInfo(comic)">
 						<view class="cell-brief">
-							01.23
+							{{comic.date}}
 						</view>
 						<view class="cell-img">
-							<image src="../../static/img/timg.jpg"></image>
+							<image :src="comic.cover"></image>
 						</view>
 						<view class="cell-title text-ellipsis">
-							醉打蒋门神
-						</view>
-					</view>
-					<view class="cell">
-						<view class="cell-brief">
-							01.23
-						</view>
-						<view class="cell-img">
-							<image src="../../static/img/timg1.jpg"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							醉打蒋门神
-						</view>
-					</view>
-					<view class="cell">
-						<view class="cell-brief">
-							01.23
-						</view>
-						<view class="cell-img">
-							<image src="../../static/img/timg2.jpg"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							醉打蒋门神
-						</view>
-					</view>
-					<view class="cell">
-						<view class="cell-brief">
-							01.25
-						</view>
-						<view class="cell-img">
-							<image src="../../static/img/timg3.jpg"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							醉打蒋门
-						</view>
-					</view>
-					<view class="cell">
-						<view class="cell-brief">
-							01.26
-						</view>
-						<view class="cell-img">
-							<image src="../../static/img/timg4.jpg"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							醉打蒋门神
+							{{comic.title}}
 						</view>
 					</view>
 				</view>
@@ -178,34 +99,18 @@
 					猜你喜欢
 				</view>
 				<view class="item-list">
-					<view class="cell">
+					<view class="cell" v-for="(comic,index) in likeComicData" :key="index" @tap="goInfo(comic)">
 						<view class="cell-img">
-							<image src="../../static/img/timg7.jpg"></image>
+							<image :src="comic.cover"></image>
 						</view>
 						<view class="cell-title text-ellipsis">
-							大名府
-						</view>
-					</view>
-					<view class="cell">
-						<view class="cell-img">
-							<image src="../../static/img/timg5.jpg"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							醉打蒋门神
-						</view>
-					</view>
-					<view class="cell">
-						<view class="cell-img">
-							<image src="../../static/img/timg6.jpg"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							醉打蒋门神
+							{{comic.title}}
 						</view>
 					</view>
 				</view>
 				<view class="btn-group">
-					<button>查看更多</button>
-					<button>
+					<button @tap="goType">查看更多</button>
+					<button @tap="getLikeComic">
 						<uni-icon size="14" type="loop" color="#7F7F7F"></uni-icon>
 						换一换
 					</button>
@@ -215,7 +120,7 @@
 		</view>
 
 		<!-- 画册 -->
-		<view class="wrap collect">
+		<view v-show="tabIndex == 2" class="wrap collect">
 			<view class="left">
 				<view class="item">
 					<image class="item-img" src="../../static/img/new_bg.png" mode="widthFix"></image>
@@ -275,88 +180,179 @@
 				</view>
 			</view>
 		</view>
+		
+		<button class="login-btn" open-type="getUserInfo" v-if="!authed" @getuserinfo="login"></button>
+	
 	</view>
 </template>
 
 <script>
+    import service from '../../service.js';
 	import uniIcon from '../../components/uni-icon.vue'
 	export default {
 		data() {
 			return {
+                authed: false,
+				readerInfo: [],
+				
 				tabIndex: 1,
+				newComicData: [],
+				newComicInfo: [],
+				recommendComicData: [],
+				subjectComicData: [],
+				likeComicData: []
 			}
 		},
 		components: {
 			uniIcon
 		},
 		onLoad() {
-
+			// #ifdef MP-WEIXIN
+			let _this = this;
+			wx.getSetting({
+				success (res){
+					if (res.authSetting['scope.userInfo']) {
+						_this.authed = true;
+					}
+				}
+			})
+			this.code_2_session();
+			// #endif
 		},
 		methods: {
+			code_2_session() {
+				uni.showLoading();
+			    uni.login({
+			    	provider: 'weixin',
+			    	success: res => {
+			            uni.request({
+			            	url: this.$requestUrl+'Comic/code_2_session',
+			            	method: 'POST',
+			                header: {
+			                	'content-type': 'application/x-www-form-urlencoded'
+			                },
+			            	data: {
+			                    js_code: res.code,
+			                    proxy_openid: this.proxyOpenid
+			                },
+			            	success: res => {
+			                    let readerInfo = res.data.data;
+			                    service.addUser(readerInfo);
+			                    this.readerInfo = readerInfo;
+								
+								this.getNewComic()
+								this.getRecommendComic()
+								this.getSubjectComic()
+								this.getLikeComic()
+			                },
+			            	fail: () => {},
+			            	complete: () => {
+								uni.hideLoading()
+							}
+			            });
+			        }
+			    });
+			},
+			login(e) {
+			    if (e.detail.errMsg == 'getUserInfo:ok') {
+			    	uni.request({
+			    		url: this.$requestUrl+'Comic/edit_reader',
+			    		method: 'POST',
+			    		header: {
+			    			'content-type': 'application/x-www-form-urlencoded'
+			    		},
+			    		data: {
+			    			openid: this.openid,
+			    			nickname: e.detail.userInfo.nickName,
+			    			head: e.detail.userInfo.avatarUrl
+			    		},
+			    		success: res => {
+			    			this.authed = true;
+			    			this.readerInfo = res.data.data;
+			    			uni.showToast({
+			    				title: '登录成功',
+			    				duration: 1500
+			    			});
+			    		}
+			    	});
+			    }
+			},
 			showFind() {
 				this.tabIndex = 1;
 			},
 			showCollect() {
 				this.tabIndex = 2;
+			},
+			getNewComic() {
+				uni.request({
+					url: this.$requestUrl + 'Comic/get_new_comic',
+					method: 'GET',
+					data: {},
+					success: res => {
+						this.newComicInfo = res.data.data[0];
+						this.newComicData = res.data.data;
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			getRecommendComic() {
+				uni.request({
+					url: this.$requestUrl+'Comic/get_recommend_comic',
+					method: 'GET',
+					data: {},
+					success: res => {
+						this.recommendComicData = res.data.data;
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			getSubjectComic() {
+				uni.request({
+					url: this.$requestUrl+'Comic/get_subject_comic',
+					method: 'GET',
+					data: {},
+					success: res => {
+						this.subjectComicData = res.data.data;
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			getLikeComic() {
+				uni.request({
+					url: this.$requestUrl+'Comic/get_like_comic',
+					method: 'GET',
+					data: {
+						openid: this.readerInfo.openid
+					},
+					success: res => {
+						this.likeComicData = res.data.data
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			goInfo(e) {
+				let detail = {
+					comic_id: e.id,
+					title: e.title
+				}
+				uni.navigateTo({
+					url: "../comic-info/comic-info?detailData=" + JSON.stringify(detail)
+				})
+			},
+			goType() {
+				uni.switchTab({
+					url: "../type/type"
+				})
 			}
 		}
 	}
 </script>
 
 <style>
-	/* 画册 */
-	.collect {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.collect .left,
-	.collect .right {
-		width: 48.5%;
-	}
-
-	.collect .item {
-		display: flex;
-		flex-direction: column;
-		border-radius: 8px;
-		overflow: hidden;
-		margin-bottom: 10px;
-	}
-
-	.collect .item-info {
-		padding: 8px;
-		background-color: #F7DEC9;
-	}
-
-	.collect .item-title {
-		font-size: 28upx;
-		margin-bottom: 5px;
-	}
-
-	.collect .item-footer {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.collect .info-box,
-	.collect .like-box {
-		font-size: 22upx;
-		display: flex;
-		align-items: center;
-	}
-
-	.collect .info-box .info-head,
-	.collect .like-box .like-icon {
-		width: 16px;
-		height: 16px;
-		margin-right: 5px;
-	}
-	
-	.collect .info-box .info-head{
-		border-radius: 50%;
-	}
-
-
 	/* 卡片 */
 	.card {
 		box-shadow: 2px 2px 6px rgba(0, 0, 0, .3);
@@ -370,7 +366,8 @@
 	}
 
 	.card .cover image {
-		width: 100%;
+		/* width: 100%; */
+		height: 100%;
 	}
 
 	.card .content {
@@ -441,8 +438,12 @@
 	.card-3 .title {
 		font-size: 52upx;
 		color: #FFF;
+		background-color: rgba(0, 0, 0, .05);
+		padding: 5px 15px;
 		position: absolute;
-		top: 250px;
+		left: 0;
+		right: 0;
+		top: 255px;
 	}
 
 	/* 推荐 */
@@ -454,6 +455,9 @@
 
 	.recommend .cover {
 		height: 140px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.recommend .body {
@@ -549,7 +553,7 @@
 		margin-bottom: 20px;
 	}
 
-	.find .item + .item {
+	.find .item+.item {
 		padding-top: 20px;
 		border-top: 1px solid #EAEAEA;
 	}
@@ -584,14 +588,15 @@
 	.cell-title {
 		font-size: 28upx;
 		color: #666;
+		max-width: 200upx;
 	}
 
 	.update .cell-img image {
 		width: 100upx;
 		height: 100upx;
 	}
-
-	.update .cell-brief {
+	
+	.update .cell-title {
 		max-width: 120upx;
 	}
 
@@ -618,5 +623,57 @@
 
 	button:after {
 		border: 0;
+	}
+	
+	/* 画册 */
+	.collect {
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	.collect .left,
+	.collect .right {
+		width: 48.5%;
+	}
+	
+	.collect .item {
+		display: flex;
+		flex-direction: column;
+		border-radius: 8px;
+		overflow: hidden;
+		margin-bottom: 10px;
+	}
+	
+	.collect .item-info {
+		padding: 8px;
+		background-color: #F7DEC9;
+	}
+	
+	.collect .item-title {
+		font-size: 28upx;
+		margin-bottom: 5px;
+	}
+	
+	.collect .item-footer {
+		display: flex;
+		justify-content: space-between;
+	}
+	
+	.collect .info-box,
+	.collect .like-box {
+		font-size: 22upx;
+		display: flex;
+		align-items: center;
+	}
+	
+	.collect .info-box .info-head,
+	.collect .like-box .like-icon {
+		width: 16px;
+		height: 16px;
+		margin-right: 5px;
+	}
+	
+	.collect .info-box .info-head {
+		border-radius: 50%;
 	}
 </style>
