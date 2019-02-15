@@ -85,7 +85,7 @@
 							{{comic.date}}
 						</view>
 						<view class="cell-img">
-							<image :src="comic.cover"></image>
+							<image :src="comic.head"></image>
 						</view>
 						<view class="cell-title text-ellipsis">
 							{{comic.title}}
@@ -101,7 +101,7 @@
 				<view class="item-list">
 					<view class="cell" v-for="(comic,index) in likeComicData" :key="index" @tap="goInfo(comic)">
 						<view class="cell-img">
-							<image :src="comic.cover"></image>
+							<image :src="comic.head"></image>
 						</view>
 						<view class="cell-title text-ellipsis">
 							{{comic.title}}
@@ -120,65 +120,55 @@
 		</view>
 
 		<!-- 画册 -->
-		<view v-show="tabIndex == 2" class="wrap collect">
-			<view class="left">
-				<view class="item">
-					<image class="item-img" src="../../static/img/new_bg.png" mode="widthFix"></image>
-					<view class="item-info">
-						<view class="item-title">
-							柯南剧场版零的执行人
-						</view>
-						<view class="item-footer">
-							<view class="info-box">
-								<image class="info-head" src="../../static/img/head.jpg"></image>
-								<text class="info-name">mirse</text>
+		<view v-show="tabIndex == 2" class="wrap">
+			
+			<view class="btn-box">
+				<button type="primary" @tap="goGatherAdd">发布</button>
+			</view>
+			
+			<view class="collect">
+				<view class="left">
+					<view class="item" v-for="(gather,index) in gatherData.left" :key="index">
+						<image class="item-img" :src="gather.url" mode="widthFix"></image>
+						<view class="item-info">
+							<view class="item-title">
+								{{gather.gather_title}}
 							</view>
-							<view class="like-box">
-								<image class="like-icon" src="../../static/img/like.png"></image>
-								<text>996</text>
+							<view class="item-footer">
+								<view class="info-box">
+									<image class="info-head" :src="gather.head"></image>
+									<text class="info-name">{{gather.nickname}}</text>
+								</view>
+								<view class="like-box" @tap="likeGather(gather.id)">
+									<image class="like-icon" src="../../static/img/like.png"></image>
+									<text>{{gather.likes}}</text>
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+				<view class="right">
+					<view class="item" v-for="(gather,index) in gatherData.right" :key="index">
+						<image class="item-img" src="../../static/img/recommend.jpg" mode="widthFix"></image>
+						<view class="item-info">
+							<view class="item-title">
+								{{gather.gather_title}}
+							</view>
+							<view class="item-footer">
+								<view class="info-box">
+									<image class="info-head" :src="gather.head"></image>
+									<text class="info-name">{{gather.nickname}}</text>
+								</view>
+								<view class="like-box" @tap="likeGather(gather.id)">
+									<image class="like-icon" src="../../static/img/like.png"></image>
+									<text>{{gather.likes}}</text>
+								</view>
 							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-			<view class="right">
-				<view class="item">
-					<image class="item-img" src="../../static/img/recommend.jpg" mode="widthFix"></image>
-					<view class="item-info">
-						<view class="item-title">
-							柯南剧场版零的执行人
-						</view>
-						<view class="item-footer">
-							<view class="info-box">
-								<image class="info-head" src="../../static/img/head.jpg"></image>
-								<text class="info-name">mirse</text>
-							</view>
-							<view class="like-box">
-								<image class="like-icon" src="../../static/img/like.png"></image>
-								<text>996</text>
-							</view>
-						</view>
-					</view>
-				</view>
-				<view class="item">
-					<image class="item-img" src="../../static/img/recommend2.jpg" mode="widthFix"></image>
-					<view class="item-info">
-						<view class="item-title">
-							柯南剧场版零的执行人
-						</view>
-						<view class="item-footer">
-							<view class="info-box">
-								<image class="info-head" src="../../static/img/head.jpg"></image>
-								<text class="info-name">mirse</text>
-							</view>
-							<view class="like-box">
-								<image class="like-icon" src="../../static/img/like.png"></image>
-								<text>996</text>
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
+			
 		</view>
 		
 		<button class="login-btn" open-type="getUserInfo" v-if="!authed" @getuserinfo="login"></button>
@@ -200,7 +190,8 @@
 				newComicInfo: [],
 				recommendComicData: [],
 				subjectComicData: [],
-				likeComicData: []
+				likeComicData: [],
+				gatherData: []
 			}
 		},
 		components: {
@@ -244,6 +235,7 @@
 								this.getRecommendComic()
 								this.getSubjectComic()
 								this.getLikeComic()
+								this.getGather()
 			                },
 			            	fail: () => {},
 			            	complete: () => {
@@ -334,6 +326,42 @@
 					complete: () => {}
 				});
 			},
+			getGather() {
+				uni.request({
+					url: this.$requestUrl+'Reader/get_gather',
+					method: 'GET',
+					data: {},
+					success: res => {
+						this.gatherData = res.data.data
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			likeGather(e) {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
+				uni.request({
+					url: this.$requestUrl+'Reader/like_gather',
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded'
+					},
+					data: {
+						gather_id: e,
+						reader_id: this.readerInfo.id
+					},
+					success: res => {
+						this.getGather()
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
 			goInfo(e) {
 				let detail = {
 					comic_id: e.id,
@@ -346,6 +374,11 @@
 			goType() {
 				uni.switchTab({
 					url: "../type/type"
+				})
+			},
+			goGatherAdd() {
+				uni.navigateTo({
+					url: "../gather-add/gather-add"
 				})
 			}
 		}
@@ -443,7 +476,7 @@
 		position: absolute;
 		left: 0;
 		right: 0;
-		top: 255px;
+		top: 257px;
 	}
 
 	/* 推荐 */
@@ -642,11 +675,11 @@
 		border-radius: 8px;
 		overflow: hidden;
 		margin-bottom: 10px;
+		box-shadow: 2px 2px 6px rgba(0, 0, 0, .3);
 	}
 	
 	.collect .item-info {
 		padding: 8px;
-		background-color: #F7DEC9;
 	}
 	
 	.collect .item-title {
@@ -675,5 +708,14 @@
 	
 	.collect .info-box .info-head {
 		border-radius: 50%;
+	}
+	
+	.btn-box {
+		margin-bottom: 10px;
+	}
+	
+	.btn-box button{
+		font-size: 28upx;
+		background-color: #D1513B;
 	}
 </style>

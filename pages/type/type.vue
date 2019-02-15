@@ -47,10 +47,6 @@
 			};
 		},
 		onLoad() {
-			this.getComicType()
-			this.getComic('-1')
-		},
-		onReady() {
 			uni.getSystemInfo({
 				success: (res) => {
 					let windowHeight = res.windowHeight;
@@ -59,10 +55,13 @@
 					query.select(".nav").boundingClientRect();
 					query.exec(data => {
 						let tab = data[0];
-						this.scrollHeight = windowHeight - tab.height - 150;
+						this.scrollHeight = windowHeight - tab.height - 140;
 					});
 				}
 			})
+			
+			this.getComicType()
+			this.getComic('-1')
 		},
 		methods: {
 			getComicType() {
@@ -122,7 +121,7 @@
 
 	.nav-cell {
 		font-size: 32upx;
-		min-width: 2em;
+		width: 2em;
 		margin-right: 50upx;
 		margin-bottom: 8px;
 		position: relative;
@@ -136,12 +135,12 @@
 	.nav-cell.on:after {
 		content: '';
 		display: inline-block;
-		width: 26px;
+		width: 1em;
 		height: 2px;
 		background-color: #D1513B;
 		position: absolute;
 		bottom: -4px;
-		left: 4px;
+		left: 0.5em;
 	}
 
 	.placeholder {

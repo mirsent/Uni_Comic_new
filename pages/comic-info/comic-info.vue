@@ -64,37 +64,74 @@
 					</view>
 				</view>
 			</view>
+			
+			<!-- 评论 -->
 			<view class="comment">
 				<view class="body">
 					<view class="comment-header">
-						<view class="title">评论({{commentData.length}})</view>
-						<view class="write" @tap="comment">
+						<view class="title">评论({{commentData.count}})</view>
+						<view class="write" @tap="goComment">
 							写评论
 						</view>
 					</view>
 					<view class="coment-body">
 						<view class="grace-comment">
-							<view class="grace-comment-list"
-                                v-for="(comment, index) in commentData" :key="index">
-								<view class="grace-comment-face">
-									<image :src="comment.head" mode="widthFix"></image>
-								</view>
-								<view class="grace-comment-body">
-									<view class="grace-comment-top">
-										<text>{{comment.nickname}}</text>
+							<view class="comment-item" v-for="(comment, index) in commentData.comment" :key="index">
+								
+								<view class="grace-comment-list">
+									<view class="grace-comment-face">
+										<image :src="comment.head" mode="widthFix"></image>
 									</view>
-									<view class="grace-comment-content">{{comment.comment_content}}</view>
-									<view class="grace-comment-date">
-										<text>{{comment.comment_time}}</text>
+									<view class="grace-comment-body">
+										<view class="grace-comment-name">
+											{{comment.nickname}}
+										</view>
+										<view class="grace-comment-date">
+											{{comment.comment_time}}
+										</view>
+										<view class="grace-comment-content">{{comment.comment_content}}</view>
+										<view class="grace-comment-footer">
+											<text @tap="reply(comment)">回复</text>
+										</view>
 									</view>
 								</view>
+								
+								<view class="grace-comment-sub">
+									<view class="grace-comment-list" v-for="(c,i) in comment.sub" :key="i">
+										<view class="grace-comment-face">
+											<image :src="c.head" mode="widthFix"></image>
+										</view>
+										<view class="grace-comment-body">
+											<view class="grace-comment-name">
+												{{c.nickname}}
+											</view>
+											<view class="grace-comment-date">
+												{{c.comment_time}}
+											</view>
+											<view class="grace-comment-content">{{c.comment_content}}</view>
+											<view class="grace-comment-footer">
+												<text @tap="reply(c)">回复</text>
+											</view>
+										</view>
+									</view>
+								</view>
+								
 							</view>
+							
                             <view class="grace-comment-list" v-if="commentData.length == 0">
                                 <view class="grace-comment-content">暂无评论...</view>
                             </view>
 						</view>
 					</view>
 				</view>
+			</view>
+		</view>
+		
+		<!-- 回复模板 -->
+		<view class="comment-template" v-if="isCommentTemplate" @tap="cancleReply">
+			<view class="comment-body" @tap.stop="">
+				<input type="text" value="" :placeholder="replyWho" class="comment-input" @input="commentChange" />
+				<text class="comment-btn" @tap="confirmReply">发表</text>
 			</view>
 		</view>
 
@@ -121,7 +158,7 @@
 				</view>
 			</view>
 		</view>
-        
+		
         <view class="go-top" v-show="isToUp" @tap="goTop">
         	<image src="../../static/img/top.png"></image>
         </view>
@@ -154,7 +191,13 @@
                 commentData: [],
                 
                 isProxy: '',
-                proxyOpenid: ''
+                proxyOpenid: '',
+				
+				// 回复
+				isCommentTemplate: false,
+				comment: '',
+				replyParent: [],
+				replyWho: ''
 			};
 		},
 		onLoad(e) {
@@ -261,7 +304,7 @@
 					}
 				});
 			},
-            // 评论
+            // 获取评论
             getCommentInfo() {
                 uni.request({
                 	url: this.$requestUrl+'Comic/get_comment',
@@ -274,6 +317,75 @@
                     }
                 });
             },
+			// 回复
+			commentChange(e) {
+				this.comment = e.detail.value
+			},
+			reply(e) {
+				this.isCommentTemplate = true
+				this.replyParent = e
+				this.replyWho = '回复：'+e.nickname
+				console.log(e);
+			},
+			cancleReply() {
+				this.isCommentTemplate = false
+			},
+			confirmReply() {
+				if (this.comment.length < 1) {
+					uni.showToast({
+						title: '请输入评论内容',
+				        icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+				    return
+				}
+				
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
+				
+				let pid;
+				let level = this.replyParent.level;
+				if (level == 1) {
+					pid = this.replyParent.id
+				} else {
+					pid = this.replyParent.pid
+				}
+				
+				uni.request({
+					url: this.$requestUrl+'Comic/reply',
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded'
+					},
+					data: {
+				        comic_id: this.comicId,
+				        openid: this.openid,
+				        comment_content: this.comment,
+						pid: pid,
+						reply_comment_id: this.replyParent.id,
+						reply_openid: this.replyParent.openid
+				    },
+					success: res => {
+				        if (res.data.status == 1) {
+				        	uni.showToast({
+				        		title: '评论成功',
+				        		mask: false,
+				        		duration: 1500
+				        	});
+				            setTimeout(()=>{
+				                this.isCommentTemplate = false
+								this.getCommentInfo()
+								uni.hideLoading()
+				            }, 1500)
+				        }
+				    },
+					fail: () => {},
+					complete: () => {}
+				});
+			},
 			showDetail() {
 				this.isDetail = true;
 				this.isChapter = false;
@@ -452,7 +564,7 @@
 					complete: () => {}
 				});
 			},
-            comment() {
+            goComment() {
                 let detail = {
                     comic_id: this.comic.comic_id,
                     title: this.comic.title
@@ -680,6 +792,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		margin-bottom: 10px;
 	}
 
 	.comment-header .title {
@@ -696,16 +809,25 @@
 		padding: 2%;
 		width: 96%;
 	}
-
-	.grace-comment {
-		padding: 5rpx 0;
+	
+	.comment-item{
+		padding: 20px 0;
+		border-bottom: 1px solid #f1f1f1;
+	}
+	
+	.grace-comment-sub{
+		background-color: #FAFAFA;
+		padding: 10px;
+		margin-left: 30px;
+	}
+	.grace-comment-sub .grace-comment-list + .grace-comment-list{
+		border-top: 1px solid #f1f1f1;
 	}
 
 	.grace-comment-list {
 		display: flex;
 		flex-wrap: nowrap;
-		padding: 10upx 0;
-		margin: 10upx 0;
+		padding: 10px 0;
 	}
 
 	.grace-comment-face {
@@ -726,34 +848,25 @@
 		width: 100%;
 	}
 
-	.grace-comment-top {
-		line-height: 1.5em;
-		justify-content: space-between;
-	}
-
-	.grace-comment-top text {
+	.grace-comment-name {
 		color: #0A98D5;
 		font-size: 24upx;
-	}
-
-	.grace-comment-top text:last-child {
-		color: #666666;
+		margin-bottom: 5px;
 	}
 
 	.grace-comment-date {
-		line-height: 1.5em;
-		justify-content: space-between;
-	}
-
-	.grace-comment-date text {
 		color: #666666;
-		font-size: 24upx;
+		font-size: 20upx;
 	}
 
 	.grace-comment-content {
 		line-height: 1.6em;
 		font-size: 28upx;
-		padding: 8upx 0;
+	}
+	.grace-comment-footer{
+		text-align: right;
+		font-size: 28upx;
+		color: #666;
 	}
 
 	.grace-comment-zan {
@@ -767,6 +880,34 @@
 		border-radius: 30upx;
 		color: #333 !important;
 		margin: 0 10upx;
+	}
+	
+	/* 评论模板 */
+	.comment-template{
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 999;
+		background-color: rgba(0,0,0,.5);
+		display: flex;
+		align-items: flex-end;
+	}
+	.comment-body{
+		width: 100%;
+		padding: 20px;
+		background-color: #FFF;
+		display: flex;
+		align-items: center;
+	}
+	.comment-input{
+		font-size: 28upx;
+		flex: 1;
+		margin-right: 10px;
+	}
+	.comment-btn{
+		font-size: 28upx;
 	}
 
 	.uni-media-list {

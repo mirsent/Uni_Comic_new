@@ -3,11 +3,11 @@
 
 		<view class="info">
 			<view class="top">
-				<image src="../../static/img/timg2.jpg"></image>
+				<image :src="readerInfo.head"></image>
 			</view>
 			<view class="bottom">
-				Mirse
-				<view class="notice">
+				{{readerInfo.nickname}}
+				<view class="notice" @tap="goNotice">
 					<image src="../../static/img/notice.png"></image>
 				</view>
 			</view>
@@ -26,81 +26,60 @@
 		</view>
 
 		<!-- 浏览历史 -->
-		<view class="list history" v-show="tabIndex == 1">
-			<view class="list-item" v-for="(comic,index) in historyData" :key="index" @tap="reading(comic)">
-				<view class="list-cover">
-					<image :src="comic.head" mode="widthFix"></image>
-				</view>
-				<view class="list-content">
-					<view class="title">
-						{{comic.title}}
+		<scroll-view scroll-y :style="{height: scrollHeight+'px'}">
+			<view class="list history" v-show="tabIndex == 1">
+				<view class="list-item" v-for="(comic,index) in historyData" :key="index" @tap="reading(comic)">
+					<view class="list-cover">
+						<image :src="comic.head" mode="widthFix"></image>
 					</view>
-					<view class="content">
-						<view class="left">
-							<view class="brief">
-								第{{comic.chapter_name}}章 {{comic.chapter_title?comic.chapter_title:''}} <text>已读{{comic.rate}}%</text>
-							</view>
-							<view class="progress">
-								<progress :percent="comic.rate" stroke-width="1" activeColor="#D1513B" backgroundColor="#DDD" />
-							</view>
+					<view class="list-content">
+						<view class="title">
+							{{comic.title}}
 						</view>
-						<view class="right">
-							<button type="primary">续看</button>
+						<view class="content">
+							<view class="left">
+								<view class="brief">
+									第{{comic.chapter_name}}章 {{comic.chapter_title?comic.chapter_title:''}} <text>已读{{comic.rate}}%</text>
+								</view>
+								<view class="progress">
+									<progress :percent="comic.rate" stroke-width="1" activeColor="#D1513B" backgroundColor="#DDD" />
+								</view>
+							</view>
+							<view class="right">
+								<button type="primary">续看</button>
+							</view>
 						</view>
 					</view>
 				</view>
 			</view>
-		</view>
 
-		<!-- 我的收藏 -->
-		<view class="list collect" v-show="tabIndex == 2">
-			<view class="list-item">
-				<view class="list-cover">
-					<image src="../../static/img/head.jpg" mode="widthFix"></image>
-				</view>
-				<view class="list-content">
-					<view class="title">
-						名侦探柯南
+			<!-- 我的收藏 -->
+			<view class="list collect" v-show="tabIndex == 2">
+				<view class="list-item" v-for="(comic,index) in collectData" :key="index" @tap="reading(comic)">
+					<view class="list-cover">
+						<image :src="comic.head" mode="widthFix"></image>
 					</view>
-					<view class="content">
-						<view class="left">
-							<view class="brief">
-								有<text class="em">20 </text>章未读
-							</view>
-							<view class="brief">
-								更新至：第30章 战后
-							</view>
+					<view class="list-content">
+						<view class="title">
+							{{comic.title}}
 						</view>
-						<view class="right">
-							<button type="primary">续看</button>
-						</view>
-					</view>
-				</view>
-			</view>
-			<view class="list-item">
-				<view class="list-cover">
-					<image src="../../static/img/head.jpg" mode="widthFix"></image>
-				</view>
-				<view class="list-content">
-					<view class="title">
-						名侦探柯南
-					</view>
-					<view class="content">
-						<view class="left">
-							<view class="brief">
-								有<text class="em">20 </text>章未读
+						<view class="content">
+							<view class="left">
+								<view class="brief">
+									有<text class="em">{{comic.remain_chapter}} </text>章未读
+								</view>
+								<view class="brief">
+									更新至：第{{comic.total_chapter}}章 {{comic.chapter_title?comic.chapter_title:''}}
+								</view>
 							</view>
-							<view class="brief">
-								更新至：第30章 战后
+							<view class="right">
+								<button type="primary">续看</button>
 							</view>
-						</view>
-						<view class="right">
-							<button type="primary">续看</button>
 						</view>
 					</view>
 				</view>
 			</view>
-		</view>
+		</scroll-view>
 	</view>
 </template>
 
@@ -109,14 +88,18 @@
 	export default {
 		data() {
 			return {
+				scrollHeight: '',
 				tabIndex: 1,
 				openid: '',
-				historyData: []
+				readerInfo: [],
+				historyData: [],
+				collectData: []
 			};
 		},
 		onLoad() {
 			let _this = this;
 			let readerInfo = service.getUsers();
+			this.readerInfo = readerInfo;
 			this.openid = readerInfo.openid;
 			wx.getSetting({
 				// 检查权限
@@ -128,6 +111,22 @@
 				}
 			})
 			this.getHistory()
+			this.getCollect()
+			
+			uni.getSystemInfo({
+				success: (res) => {
+					let windowHeight = res.windowHeight;
+					
+					let query = uni.createSelectorQuery();
+					query.select(".info").boundingClientRect();
+					query.select(".tab").boundingClientRect();
+					query.exec(data => {
+						let info = data[0];
+						let tab = data[1];
+						this.scrollHeight = windowHeight - info.height - tab.height - 20;
+					});
+				}
+			})
 		},
 		methods: {
 			getHistory() {
@@ -147,8 +146,21 @@
 			        }
 			    });
 			},
+			getCollect() {
+				uni.request({
+					url: this.$requestUrl+'Comic/get_collect_comic',
+					method: 'GET',
+					data: {
+						openid: this.openid
+					},
+					success: res => {
+						this.collectData = res.data.data
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
 			reading(e) {
-			    console.log(e);
 				uni.request({
 					url: this.$requestUrl+'Comic/get_reading_chapter',
 					method: 'GET',
@@ -171,6 +183,11 @@
 					complete: () => {}
 				});
 			},
+			goNotice() {
+				uni.navigateTo({
+					url: "../notice/notice"
+				});
+			},
 			showHistory() {
 				this.tabIndex = 1;
 			},
@@ -186,7 +203,7 @@
 
 <style>
 	.list {
-		padding: 20px;
+		padding: 20px 20px 0 20px;
 	}
 
 	.list-item {

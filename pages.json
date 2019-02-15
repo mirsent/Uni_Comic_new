@@ -37,6 +37,14 @@
         {
             "path" : "pages/comic-detail/comic-detail",
             "style" : {}
+        },
+        {
+            "path" : "pages/gather-add/gather-add",
+            "style" : {}
+        },
+        {
+            "path" : "pages/comment/comment",
+            "style" : {}
         }
     ],
     "condition" : {
@@ -57,6 +65,15 @@
             {
                 "name" : "notice",
                 "path" : "pages/notice/notice"
+            },
+            {
+                "name" : "gather-add",
+                "path" : "pages/gather-add/gather-add"
+            },
+            {
+                "name" : "comment",
+                "path" : "pages/comment/comment",
+                "query" : "detailData={\"comic_id\": \"2\", \"title\": \"龙珠 巴达克 AFTER\"}"
             },
             {
                 "name" : "comic-info",
