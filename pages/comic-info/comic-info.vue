@@ -450,7 +450,7 @@
 			},
 			like() {
 				uni.request({
-					url: this.$requestUrl+'Comic/like',
+					url: this.$requestUrl+'Reader/like',
 					method: 'POST',
 					header: {
 						'content-type': 'application/x-www-form-urlencoded'
@@ -481,7 +481,7 @@
 			},
 			cancelLike() {
 				uni.request({
-					url: this.$requestUrl+'Comic/cancel_like',
+					url: this.$requestUrl+'Reader/cancel_like',
 					method: 'GET',
 					data: {
 						comic_id: this.comic.comic_id,
@@ -508,7 +508,7 @@
 			},
 			collect() {
 				uni.request({
-					url: this.$requestUrl+'Comic/collect',
+					url: this.$requestUrl+'Reader/collect',
 					method: 'POST',
 					header: {
 						'content-type': 'application/x-www-form-urlencoded'
@@ -539,7 +539,7 @@
 			},
 			cancelCollect() {
 				uni.request({
-					url: this.$requestUrl+'Comic/cancel_collect',
+					url: this.$requestUrl+'Reader/cancel_collect',
 					method: 'GET',
 					data: {
 						comic_id: this.comic.comic_id,

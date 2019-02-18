@@ -148,7 +148,7 @@
 			},
 			getCollect() {
 				uni.request({
-					url: this.$requestUrl+'Comic/get_collect_comic',
+					url: this.$requestUrl+'Reader/get_collect_comic',
 					method: 'GET',
 					data: {
 						openid: this.openid

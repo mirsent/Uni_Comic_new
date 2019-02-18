@@ -13,7 +13,7 @@
 			<view class="list">
 				<view class="list-cell" v-for="(comic,index) in comicData" :key="index" @tap="goInfo(comic)">
 					<view class="left">
-						<image :src="comic.cover"></image>
+						<image :src="comic.head"></image>
 					</view>
 					<view class="right">
 						<view class="title">
@@ -22,7 +22,7 @@
 						<view class="brief">
 							人气值：{{comic.popularity}}
 						</view>
-						<view class="brief text-2-ellipsis">
+						<view class="brief text-ellipsis">
 							{{comic.brief}}
 						</view>
 					</view>
@@ -157,8 +157,8 @@
 
 	.list-cell .left {
 		flex-shrink: 0;
-		flex: 1;
-		height: 280upx;
+		width: 200upx;
+		height: 200upx;
 		margin-right: 12px;
 		overflow: hidden;
 	}
@@ -168,16 +168,16 @@
 	}
 
 	.list-cell .right {
-		width: 450upx;
+		flex: 1;
 	}
 
 	.list-cell .right .title {
 		font-size: 36upx;
-		line-height: 2.5;
+		line-height: 2;
 	}
 
 	.list-cell .right .brief {
-		width: 100%;
+		width: 440upx;
 		flex-shrink: 0;
 		font-size: 28upx;
 		color: #BBB;

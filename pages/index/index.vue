@@ -13,7 +13,7 @@
 		<view v-show="tabIndex == 1" class="wrap find">
 
 			<!-- 最新漫画 -->
-			<view class="card card-3" @tap="goInfo(newComicInfo)">
+			<view class="card card-2" @tap="goInfo(newComicInfo)">
 				<view class="cover">
 					<image :src="newComicInfo.cover"></image>
 				</view>
@@ -231,10 +231,11 @@
 			                    service.addUser(readerInfo);
 			                    this.readerInfo = readerInfo;
 								
-								this.getNewComic()
-								this.getRecommendComic()
-								this.getSubjectComic()
-								this.getLikeComic()
+								this.getData()
+								// this.getNewComic()
+								// this.getRecommendComic()
+								// this.getSubjectComic()
+								// this.getLikeComic()
 								this.getGather()
 			                },
 			            	fail: () => {},
@@ -321,6 +322,25 @@
 					},
 					success: res => {
 						this.likeComicData = res.data.data
+					},
+					fail: () => {},
+					complete: () => {}
+				});
+			},
+			getData() {
+				uni.request({
+					url: this.$requestUrl+'Api/get_index_data',
+					method: 'GET',
+					data: {
+						openid: this.readerInfo.openid
+					},
+					success: res => {
+						let info = res.data.data;
+						this.newComicInfo = info.new[0];
+						this.newComicData = info.new;
+						this.recommendComicData = info.recommend;
+						this.subjectComicData = info.subject;
+						this.likeComicData = info.like;
 					},
 					fail: () => {},
 					complete: () => {}
