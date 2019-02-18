@@ -11,163 +11,172 @@
 
 		<!-- 发现 -->
 		<view v-show="tabIndex == 1" class="wrap find">
-
-			<!-- 最新漫画 -->
-			<view class="card card-2" @tap="goInfo(newComicInfo)">
-				<view class="cover">
-					<image :src="newComicInfo.cover"></image>
-				</view>
-				<view class="content">
-					<view class="title text-2-ellipsis">
-						{{newComicInfo.title}}
-					</view>
-					<view class="brief text-2-ellipsis">
-						<rich-text :nodes="newComicInfo.brief"></rich-text>
-					</view>
-				</view>
+			<view class="loading" v-if="loading">
+				<image src="../../static/img/loading.gif" mode="widthFix"></image>
 			</view>
-
-			<!-- 推荐 -->
-			<view class="recommend" v-for="(comic,index) in recommendComicData" :key="index" @tap="goInfo(comic)">
-				<view class="card cover">
-					<image :src="comic.cover" mode="widthFix"></image>
-				</view>
-				<view class="body">
-					<view class="head">
-						<image :src="comic.head"></image>
+			<scroll-view id="scrollFind" scroll-y :style="{height: scrollHeightFind+'px'}" @touchstart="startFind" @touchend="moveFind">
+				<!-- 最新漫画 -->
+				<view class="card card-2" @tap="goInfo(newComicInfo)">
+					<view class="cover">
+						<image :src="newComicInfo.cover"></image>
 					</view>
 					<view class="content">
-						<view class="top">
-							<view class="title">
+						<view class="title text-2-ellipsis">
+							{{newComicInfo.title}}
+						</view>
+						<view class="brief text-2-ellipsis">
+							<rich-text :nodes="newComicInfo.brief"></rich-text>
+						</view>
+					</view>
+				</view>
+				<!-- 推荐 -->
+				<view class="recommend" v-for="(comic,index) in recommendComicData" :key="index" @tap="goInfo(comic)">
+					<view class="card cover">
+						<image :src="comic.cover" mode="widthFix"></image>
+					</view>
+					<view class="body">
+						<view class="head">
+							<image :src="comic.head"></image>
+						</view>
+						<view class="content">
+							<view class="top">
+								<view class="title">
+									{{comic.title}}
+								</view>
+								<view class="view">
+									<image src="../../static/img/fire.png"></image>
+									<text>{{comic.popularity}}</text>
+								</view>
+							</view>
+							<view class="brief text-ellipsis">
+								{{comic.brief}}
+							</view>
+						</view>
+					</view>
+				</view>
+				<!-- 专题 -->
+				<view v-for="(comic,index) in subjectComicData" :key="index">
+					<view class="card subject">
+						<view class="content">
+							<view class="top">
+								<view class="top-box">
+									<image v-for="(img,i) in comic.top" :key="i" :src="img"></image>
+								</view>
+							</view>
+							<view class="bottom">
+								<view class="top-box" style="margin-left: -100upx;">
+									<image v-for="(img,i) in comic.bottom" :key="i" :src="img"></image>
+								</view>
+							</view>
+						</view>
+					</view>
+					
+					<view class="subject-title">
+						专题推荐：{{comic.subject_name}}
+					</view>
+				</view>
+				<!-- 最近更新 -->
+				<view class="item update">
+					<view class="item-title">
+						最近更新
+					</view>
+					<view class="item-list">
+						<view class="cell" v-for="(comic, index) in newComicData" :key="index" @tap="goInfo(comic)">
+							<view class="cell-brief">
+								{{comic.date}}
+							</view>
+							<view class="cell-img">
+								<image :src="comic.head"></image>
+							</view>
+							<view class="cell-title text-ellipsis">
 								{{comic.title}}
 							</view>
-							<view class="view">
-								<image src="../../static/img/fire.png"></image>
-								<text>{{comic.popularity}}</text>
-							</view>
-						</view>
-						<view class="brief text-ellipsis">
-							{{comic.brief}}
 						</view>
 					</view>
 				</view>
-			</view>
-			
-			<!-- 专题 -->
-			<view v-for="(comic,index) in subjectComicData" :key="index">
-				<view class="card subject">
-					<view class="content">
-						<view class="top">
-							<view class="top-box">
-								<image v-for="(img,i) in comic.top" :key="i" :src="img"></image>
+				<!-- 猜你喜欢 -->
+				<view class="item like">
+					<view class="item-title">
+						猜你喜欢
+					</view>
+					<view class="item-list">
+						<view class="cell" v-for="(comic,index) in likeComicData" :key="index" @tap="goInfo(comic)">
+							<view class="cell-img">
+								<image :src="comic.head"></image>
 							</view>
-						</view>
-						<view class="bottom">
-							<view class="top-box" style="margin-left: -100upx;">
-								<image v-for="(img,i) in comic.bottom" :key="i" :src="img"></image>
+							<view class="cell-title text-ellipsis">
+								{{comic.title}}
 							</view>
 						</view>
 					</view>
-				</view>
-				
-				<view class="subject-title">
-					专题推荐：{{comic.subject_name}}
-				</view>
-			</view>
-
-			<view class="item update">
-				<view class="item-title">
-					最近更新
-				</view>
-				<view class="item-list">
-					<view class="cell" v-for="(comic, index) in newComicData" :key="index" @tap="goInfo(comic)">
-						<view class="cell-brief">
-							{{comic.date}}
-						</view>
-						<view class="cell-img">
-							<image :src="comic.head"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							{{comic.title}}
-						</view>
+					<view class="btn-group">
+						<button @tap="goType">查看更多</button>
+						<button @tap="getLikeComic">
+							<uni-icon size="14" type="loop" color="#7F7F7F"></uni-icon>
+							换一换
+						</button>
 					</view>
 				</view>
-			</view>
-
-			<view class="item like">
-				<view class="item-title">
-					猜你喜欢
-				</view>
-				<view class="item-list">
-					<view class="cell" v-for="(comic,index) in likeComicData" :key="index" @tap="goInfo(comic)">
-						<view class="cell-img">
-							<image :src="comic.head"></image>
-						</view>
-						<view class="cell-title text-ellipsis">
-							{{comic.title}}
-						</view>
-					</view>
-				</view>
-				<view class="btn-group">
-					<button @tap="goType">查看更多</button>
-					<button @tap="getLikeComic">
-						<uni-icon size="14" type="loop" color="#7F7F7F"></uni-icon>
-						换一换
-					</button>
-				</view>
-			</view>
-
+			</scroll-view>
 		</view>
 
 		<!-- 画册 -->
 		<view v-show="tabIndex == 2" class="wrap">
 			
+			<view class="loading" v-if="loading">
+				<image src="../../static/img/loading.gif" mode="widthFix"></image>
+			</view>
+			
 			<view class="btn-box">
 				<button type="primary" @tap="goGatherAdd">发布</button>
 			</view>
 			
-			<view class="collect">
-				<view class="left">
-					<view class="item" v-for="(gather,index) in gatherData.left" :key="index">
-						<image class="item-img" :src="gather.url" mode="widthFix"></image>
-						<view class="item-info">
-							<view class="item-title">
-								{{gather.gather_title}}
-							</view>
-							<view class="item-footer">
-								<view class="info-box">
-									<image class="info-head" :src="gather.head"></image>
-									<text class="info-name">{{gather.nickname}}</text>
+			<scroll-view id="scrollCollect" scroll-y :style="{height: scrollHeightCollect+'px'}" @touchstart="startCollect" @touchend="moveCollect">
+				<view class="collect">
+					<view class="left">
+						<view class="item" v-for="(gather,index) in gatherData.left" :key="index">
+							<image class="item-img" :src="gather.url" mode="widthFix"></image>
+							<view class="item-info">
+								<view class="item-title">
+									{{gather.gather_title}}
 								</view>
-								<view class="like-box" @tap="likeGather(gather.id)">
-									<image class="like-icon" src="../../static/img/like.png"></image>
-									<text>{{gather.likes}}</text>
+								<view class="item-footer">
+									<view class="info-box">
+										<image class="info-head" :src="gather.head"></image>
+										<text class="info-name">{{gather.nickname}}</text>
+									</view>
+									<view class="like-box" @tap="likeGather(gather.id)">
+										<image v-if="gather.is_like" class="like-icon" src="../../static/img/collect_on.png"></image>
+										<image v-else class="like-icon" src="../../static/img/collect_red.png"></image>
+										<text>{{gather.likes}}</text>
+									</view>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="right">
+						<view class="item" v-for="(gather,index) in gatherData.right" :key="index">
+							<image class="item-img" :src="gather.url" mode="widthFix"></image>
+							<view class="item-info">
+								<view class="item-title">
+									{{gather.gather_title}}
+								</view>
+								<view class="item-footer">
+									<view class="info-box">
+										<image class="info-head" :src="gather.head"></image>
+										<text class="info-name">{{gather.nickname}}</text>
+									</view>
+									<view class="like-box" @tap="likeGather(gather.id)">
+										<image v-if="gather.is_like" class="like-icon" src="../../static/img/collect_on.png"></image>
+										<image v-else class="like-icon" src="../../static/img/collect_red.png"></image>
+										<text>{{gather.likes}}</text>
+									</view>
 								</view>
 							</view>
 						</view>
 					</view>
 				</view>
-				<view class="right">
-					<view class="item" v-for="(gather,index) in gatherData.right" :key="index">
-						<image class="item-img" src="../../static/img/recommend.jpg" mode="widthFix"></image>
-						<view class="item-info">
-							<view class="item-title">
-								{{gather.gather_title}}
-							</view>
-							<view class="item-footer">
-								<view class="info-box">
-									<image class="info-head" :src="gather.head"></image>
-									<text class="info-name">{{gather.nickname}}</text>
-								</view>
-								<view class="like-box" @tap="likeGather(gather.id)">
-									<image class="like-icon" src="../../static/img/like.png"></image>
-									<text>{{gather.likes}}</text>
-								</view>
-							</view>
-						</view>
-					</view>
-				</view>
-			</view>
+			</scroll-view>
 			
 		</view>
 		
@@ -182,10 +191,19 @@
 	export default {
 		data() {
 			return {
+				tabIndex: 2,
                 authed: false,
-				readerInfo: [],
+				scrollTop: 0,
+				scrollHeightFind: '',
+				scrollHeightCollect: '',
+				loading: false,
 				
-				tabIndex: 1,
+				scrollStartFindY: '',
+				scrollStartFindTop: '',
+				scrollStartCollectY: '',
+				scrollStartCollectTop: '',
+				
+				readerInfo: [],
 				newComicData: [],
 				newComicInfo: [],
 				recommendComicData: [],
@@ -210,7 +228,59 @@
 			this.code_2_session();
 			// #endif
 		},
+		onReady() {
+			uni.getSystemInfo({
+				success: (res) => {
+					let windowHeight = res.windowHeight;
+					
+					let query = uni.createSelectorQuery();
+					query.select(".tab").boundingClientRect();
+					query.select(".btn-box").boundingClientRect();
+					query.exec(data => {
+						let tab = data[0];
+						let btn = data[1];
+						this.scrollHeightCollect = windowHeight - tab.height - btn.height - 45;
+						this.scrollHeightFind = windowHeight - tab.height - 30;
+						this.scrollTop = 200;
+					});
+				}
+			})
+		},
 		methods: {
+			startFind(e){
+				let _this = this;
+				_this.scrollStartFindY = e.clientY;
+				uni.createSelectorQuery().select('#scrollFind').fields({
+					scrollOffset: true,
+					size: true
+				}, data => {
+					_this.scrollStartFindTop = data.scrollTop;
+				}).exec();
+			},
+			moveFind(e) {
+				let scrollEndY = e.mp.changedTouches[0].clientY
+				if (this.scrollStartFindTop == 0 && scrollEndY - this.scrollStartFindY > 20) {
+					this.loading = true;
+					this.getData()
+				}
+			},
+			startCollect(e){
+				let _this = this;
+				_this.scrollStartCollectY = e.clientY;
+				uni.createSelectorQuery().select('#scrollCollect').fields({
+					scrollOffset: true,
+					size: true
+				}, data => {
+					_this.scrollStartCollectTop = data.scrollTop;
+				}).exec();
+			},
+			moveCollect(e) {
+				let scrollEndY = e.mp.changedTouches[0].clientY
+				if (this.scrollStartCollectTop == 0 && scrollEndY - this.scrollStartCollectY > 20) {
+					this.loading = true;
+					this.getGather()
+				}
+			},
 			code_2_session() {
 				uni.showLoading();
 			    uni.login({
@@ -232,11 +302,6 @@
 			                    this.readerInfo = readerInfo;
 								
 								this.getData()
-								// this.getNewComic()
-								// this.getRecommendComic()
-								// this.getSubjectComic()
-								// this.getLikeComic()
-								this.getGather()
 			                },
 			            	fail: () => {},
 			            	complete: () => {
@@ -274,44 +339,8 @@
 				this.tabIndex = 1;
 			},
 			showCollect() {
+				this.getGather()
 				this.tabIndex = 2;
-			},
-			getNewComic() {
-				uni.request({
-					url: this.$requestUrl + 'Comic/get_new_comic',
-					method: 'GET',
-					data: {},
-					success: res => {
-						this.newComicInfo = res.data.data[0];
-						this.newComicData = res.data.data;
-					},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			getRecommendComic() {
-				uni.request({
-					url: this.$requestUrl+'Comic/get_recommend_comic',
-					method: 'GET',
-					data: {},
-					success: res => {
-						this.recommendComicData = res.data.data;
-					},
-					fail: () => {},
-					complete: () => {}
-				});
-			},
-			getSubjectComic() {
-				uni.request({
-					url: this.$requestUrl+'Comic/get_subject_comic',
-					method: 'GET',
-					data: {},
-					success: res => {
-						this.subjectComicData = res.data.data;
-					},
-					fail: () => {},
-					complete: () => {}
-				});
 			},
 			getLikeComic() {
 				uni.request({
@@ -328,6 +357,10 @@
 				});
 			},
 			getData() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
 				uni.request({
 					url: this.$requestUrl+'Api/get_index_data',
 					method: 'GET',
@@ -343,19 +376,26 @@
 						this.likeComicData = info.like;
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+						this.loading = false
+					}
 				});
 			},
 			getGather() {
 				uni.request({
 					url: this.$requestUrl+'Reader/get_gather',
 					method: 'GET',
-					data: {},
+					data: {
+						reader_id: this.readerInfo.id
+					},
 					success: res => {
 						this.gatherData = res.data.data
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						this.loading = false
+					}
 				});
 			},
 			likeGather(e) {
@@ -406,6 +446,14 @@
 </script>
 
 <style>
+	.loading {
+		text-align: center;
+		margin-bottom: 10px;
+		transition: all .5s;
+	}
+	.loading image {
+		width: 80px;
+	}
 	/* 卡片 */
 	.card {
 		box-shadow: 2px 2px 6px rgba(0, 0, 0, .3);

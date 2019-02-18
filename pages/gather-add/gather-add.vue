@@ -11,14 +11,16 @@
 			</view>
 		
 			<view class="uploader">
-				<view class="uploader-file" v-if="image">
-					<image class="uploader-img" :src="image" mode="widthFix"></image>
-					<view class="remove" @tap="removeImage(index)">
-						<uni-icon size="30" type="trash" color="#fff"></uni-icon>
+				<block v-for="(image,index) in imageList" :key="index">
+					<view class="uploader-file">
+						<image class="uploader-img" :src="image" mode="widthFix"></image>
+						<view class="remove" @tap="removeImage(index)">
+							<uni-icon size="30" type="trash" color="#fff"></uni-icon>
+						</view>
 					</view>
-				</view>
-				<view class="uploader-input-box" @tap="chooseImage" v-else>
-					<view class="uploader-input">
+				</block>
+				<view class="uploader-input-box">
+					<view class="uploader-input" @tap="chooseImage">
 						<uni-icon size="50" type="plusempty" color="#ccc"></uni-icon>
 					</view>
 				</view>
@@ -40,8 +42,8 @@
 			return {
 				readerId: '',
 				title: '',
-				image: '',
-				url: ''
+				imgs: [],
+				imageList: []
 			};
 		},
 		components: {
@@ -54,21 +56,22 @@
 			chooseImage() {
 				let _this = this;
 				uni.chooseImage({
-					count: 1,
+					count: 9,
 					sizeType: ['original', 'compressed'],
 					sourceType: ['album', 'camera'],
 					success: function (res) {
-						_this.image = res.tempFilePaths
+						console.log(res);
+						_this.imageList = _this.imageList.concat(res.tempFilePaths);
 					}
 				});
 			},
 			removeImage(e) {
-				this.image = ''
+				this.imageList.splice(e, 1);
 			},
 			titleChange(e) {
 				this.title = e.detail.value;
 			},
-			uploadImg(imgPath) {
+			uploadImg(imgPath, count) {
 				let _this = this;
 				uni.uploadFile({
 					url: this.$requestUrl+'Comic/upload_img',
@@ -78,30 +81,37 @@
 						
 					},
 					success: (uploadFileRes) => {
-						_this.url = uploadFileRes.data
-					
-						uni.request({
-							url: this.$requestUrl+'Reader/add_gather',
-							method: 'POST',
-							header: {
-								'content-type': 'application/x-www-form-urlencoded'
-							},
-							data: {
-								publisher_id: this.readerId,
-								gather_title: this.title,
-								url: this.url
-							},
-							success: res => {
-								uni.navigateBack({
-									delta: 1
-								});
-							},
-							fail: () => {},
-							complete: () => {
-								uni.hideLoading()
-							}
+						_this.imgs = _this.imgs.concat(uploadFileRes.data);
+						count++;
+						if (count < _this.imageList.length) {
+							_this.uploadImg(_this.imageList[count], count);
+						} else {
+							_this.addGather();
+						}
+					}
+				});
+			},
+			addGather() {
+				uni.request({
+					url: this.$requestUrl+'Reader/add_gather',
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded'
+					},
+					data: {
+						publisher_id: this.readerId,
+						gather_title: this.title,
+						url: this.imgs
+					},
+					success: res => {
+						uni.navigateBack({
+							delta: 1
 						});
 					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			save() {
@@ -118,7 +128,7 @@
 					});
 					return
 				}
-				if (!this.image) {
+				if (!this.imgs) {
 					uni.showToast({
 						title: '选择图片',
 						icon: 'none',
@@ -128,7 +138,7 @@
 					return
 				}
 				
-				this.uploadImg(this.image[0]);
+				this.uploadImg(this.imageList[0], 0);
 			}
 		}
 	}
@@ -201,6 +211,8 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		background-color: rgba(0,0,0,.5);
+		margin-bottom: 5px;
 	}
 	.uploader-file image{
 		width: 100%;
