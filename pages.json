@@ -4,7 +4,7 @@
             "path" : "pages/index/index",
             "style" : {
                 "navigationBarTitleText" : "iman",
-				"enablePullDownRefresh": true
+                "enablePullDownRefresh" : true
             }
         },
         {
@@ -46,6 +46,10 @@
         {
             "path" : "pages/comment/comment",
             "style" : {}
+        },
+        {
+            "path" : "pages/gather-detail/gather-detail",
+            "style" : {}
         }
     ],
     "condition" : {
@@ -80,6 +84,11 @@
                 "name" : "comic-info",
                 "path" : "pages/comic-info/comic-info",
                 "query" : "detailData={\"comic_id\":\"6\",\"title\":\"21世纪大地震\"}"
+            },
+            {
+                "name" : "gather-detail",
+                "path" : "pages/gather-detail/gather-detail",
+                "query" : "detailData={\"gather_id\": \"2\", \"title\": \"名侦探柯南\"}"
             }
         ]
     },

@@ -134,7 +134,8 @@
 			<scroll-view id="scrollCollect" scroll-y :style="{height: scrollHeightCollect+'px'}" @touchstart="startCollect" @touchend="moveCollect">
 				<view class="collect">
 					<view class="left">
-						<view class="item" v-for="(gather,index) in gatherData.left" :key="index">
+						<view class="item" v-for="(gather,index) in gatherData.left" :key="index"
+							@tap="goGatherDetail(gather)">
 							<image class="item-img" :src="gather.url" mode="widthFix"></image>
 							<view class="item-info">
 								<view class="item-title">
@@ -155,7 +156,8 @@
 						</view>
 					</view>
 					<view class="right">
-						<view class="item" v-for="(gather,index) in gatherData.right" :key="index">
+						<view class="item" v-for="(gather,index) in gatherData.right" :key="index"
+							@tap="goGatherDetail(gather)">
 							<image class="item-img" :src="gather.url" mode="widthFix"></image>
 							<view class="item-info">
 								<view class="item-title">
@@ -166,9 +168,15 @@
 										<image class="info-head" :src="gather.head"></image>
 										<text class="info-name">{{gather.nickname}}</text>
 									</view>
-									<view class="like-box" @tap="likeGather(gather.id)">
-										<image v-if="gather.is_like" class="like-icon" src="../../static/img/collect_on.png"></image>
-										<image v-else class="like-icon" src="../../static/img/collect_red.png"></image>
+									<view class="like-box">
+										<image class="like-icon" src="../../static/img/collect_on.png"
+											v-if="gather.is_like" 
+											@tap="cancelLikeGather(gather.id)">
+										</image>
+										<image class="like-icon" src="../../static/img/collect_red.png"
+											 v-else
+											 @tap="likeGather(gather.id)">
+										</image>
 										<text>{{gather.likes}}</text>
 									</view>
 								</view>
@@ -191,7 +199,7 @@
 	export default {
 		data() {
 			return {
-				tabIndex: 2,
+				tabIndex: 1,
                 authed: false,
 				scrollTop: 0,
 				scrollHeightFind: '',
@@ -422,6 +430,30 @@
 					}
 				});
 			},
+			cancelLikeGather(e) {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
+				uni.request({
+					url: this.$requestUrl+'Reader/cancel_like_gather',
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded'
+					},
+					data: {
+						gather_id: e,
+						reader_id: this.readerInfo.id
+					},
+					success: res => {
+						this.getGather()
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
 			goInfo(e) {
 				let detail = {
 					comic_id: e.id,
@@ -429,6 +461,15 @@
 				}
 				uni.navigateTo({
 					url: "../comic-info/comic-info?detailData=" + JSON.stringify(detail)
+				})
+			},
+			goGatherDetail(e) {
+				let detail = {
+					gather_id: e.id,
+					title: e.gather_title
+				}
+				uni.navigateTo({
+					url: "../gather-detail/gather-detail?detailData=" + JSON.stringify(detail)
 				})
 			},
 			goType() {
