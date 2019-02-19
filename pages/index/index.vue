@@ -56,23 +56,52 @@
 				</view>
 				<!-- 专题 -->
 				<view v-for="(comic,index) in subjectComicData" :key="index">
-					<view class="card subject">
-						<view class="content">
-							<view class="top">
-								<view class="top-box">
-									<image v-for="(img,i) in comic.top" :key="i" :src="img"></image>
+					<view class="subject-box" :class="{full:comic.id == fullId}" @tap="scale(comic.id)">
+						
+						<view class="close" v-if="comic.id == fullId" @tap="closeSubject">
+							<uni-icon size="30" type="clear" color="#8f8f94"></uni-icon>
+						</view>
+						
+						<view class="card subject">
+							<view class="content">
+								<view class="top">
+									<view class="top-box">
+										<image v-for="(img,i) in comic.top" :key="i" :src="img"></image>
+									</view>
 								</view>
-							</view>
-							<view class="bottom">
-								<view class="top-box" style="margin-left: -100upx;">
-									<image v-for="(img,i) in comic.bottom" :key="i" :src="img"></image>
+								<view class="bottom">
+									<view class="top-box" style="margin-left: -100upx;">
+										<image v-for="(img,i) in comic.bottom" :key="i" :src="img"></image>
+									</view>
 								</view>
 							</view>
 						</view>
-					</view>
-					
-					<view class="subject-title">
-						专题推荐：{{comic.subject_name}}
+						
+						<view class="subject-title">
+							专题推荐：{{comic.subject_name}}
+						</view>
+						
+						<view class="recommend" v-if="comic.id == fullId" v-for="(c,i) in comic.comics" :key="i" @tap="goInfo(c)">
+							<view class="body">
+								<view class="head">
+									<image :src="c.head"></image>
+								</view>
+								<view class="content">
+									<view class="top">
+										<view class="title">
+											{{c.title}}
+										</view>
+										<view class="view">
+											<image src="../../static/img/fire.png"></image>
+											<text>{{c.popularity}}</text>
+										</view>
+									</view>
+									<view class="brief text-ellipsis">
+										{{c.brief}}
+									</view>
+								</view>
+							</view>
+						</view>
 					</view>
 				</view>
 				<!-- 最近更新 -->
@@ -206,6 +235,8 @@
 				scrollHeightCollect: '',
 				loading: false,
 				
+				fullId: '',
+				
 				scrollStartFindY: '',
 				scrollStartFindTop: '',
 				scrollStartCollectY: '',
@@ -235,6 +266,8 @@
 			})
 			this.code_2_session();
 			// #endif
+			
+			this.animation = uni.createAnimation()
 		},
 		onReady() {
 			uni.getSystemInfo({
@@ -255,6 +288,12 @@
 			})
 		},
 		methods: {
+			scale(e) {
+				this.fullId = e;
+			},
+			closeSubject() {
+				this.fullId = ''
+			},
 			startFind(e){
 				let _this = this;
 				_this.scrollStartFindY = e.clientY;
@@ -487,6 +526,30 @@
 </script>
 
 <style>
+	.close {
+		position: fixed;
+		top: 12px;
+		right: 12px;
+	}
+	.full {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		z-index: 999;
+		background-color: #FFF;
+	}
+	.full .card {
+		box-shadow: none;
+		margin: 25px 10px 10px 10px;
+	}
+	.full .subject-title,
+	.full .recommend {
+		margin-left: 15px;
+		margin-right: 15px;
+	}
+	
 	.loading {
 		text-align: center;
 		margin-bottom: 10px;
