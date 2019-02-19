@@ -40,7 +40,9 @@
         },
         {
             "path" : "pages/gather-add/gather-add",
-            "style" : {}
+            "style" : {
+				"navigationBarTitleText" : "发布画册"
+			}
         },
         {
             "path" : "pages/comment/comment",
@@ -49,6 +51,24 @@
         {
             "path" : "pages/gather-detail/gather-detail",
             "style" : {}
+        },
+        {
+            "path" : "pages/note-recharge/note-recharge",
+            "style" : {
+				"navigationBarTitleText" : "充值记录"
+			}
+        },
+        {
+            "path" : "pages/note-consume/note-consume",
+            "style" : {
+				"navigationBarTitleText" : "消费记录"
+			}
+        },
+        {
+            "path" : "pages/recharge/recharge",
+            "style" : {
+				"navigationBarTitleText" : "充值"
+			}
         }
     ],
     "condition" : {
@@ -73,6 +93,18 @@
             {
                 "name" : "gather-add",
                 "path" : "pages/gather-add/gather-add"
+            },
+            {
+                "name" : "note-recharge",
+                "path" : "pages/note-recharge/note-recharge"
+            },
+            {
+                "name" : "note-consume",
+                "path" : "pages/note-consume/note-consume"
+            },
+            {
+                "name" : "recharge",
+                "path" : "pages/recharge/recharge"
             },
             {
                 "name" : "comment",

@@ -1,0 +1,99 @@
+page {
+	background-color: #FFF;
+}
+
+.timeline {
+	padding: 35upx;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+
+
+.timeline-item {
+	display: flex;
+	flex-direction: row;
+	position: relative;
+	padding-bottom: 20upx;
+	box-sizing: border-box;
+	overflow: hidden;
+
+}
+
+.timeline-item .timeline-item-divider {
+	flex-shrink: 0;
+	position: relative;
+	width: 20upx;
+	height: 20upx;
+	top: 15upx;
+	border-radius: 50%;
+	background-color: #bbb;
+}
+
+
+
+.timeline-item-divider::before,
+.timeline-item-divider::after {
+	position: absolute;
+	left: 10upx;
+	width: 1upx;
+	height: 100vh;
+	content: '';
+	background: inherit;
+}
+
+.timeline-item-divider::before {
+	bottom: 100%;
+}
+
+.timeline-item-divider::after {
+	top: 100%;
+}
+
+
+.timeline-last-item .timeline-item-divider:after {
+	display: none;
+}
+
+.timeline-first-item .timeline-item-divider:before {
+	display: none;
+}
+
+.timeline-item .timeline-item-content {
+	width: 100%;
+	padding-left: 20upx;
+}
+
+.bottom-border::after {
+	position: absolute;
+	left: 40upx;
+	right: 0;
+	height: 1px;
+	content: '';
+	background-color: #bbb;
+}
+
+.timeline-last-item .bottom-border::after {
+	display: none;
+}
+
+.content {
+	font-size: 28upx;
+}
+
+.timeline-item-content .datetime {
+	font-size: 24upx;
+	color: #888;
+	line-height: 2.5em;
+	display: flex;
+	justify-content: space-between;
+}
+
+/* 自定义节点颜色 */
+.timeline-first-item .timeline-item-divider {
+	background-color: #E27C6B;
+}
+
+.cost {
+	color: #e60340;
+}

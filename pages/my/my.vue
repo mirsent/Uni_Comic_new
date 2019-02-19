@@ -79,6 +79,30 @@
 					</view>
 				</view>
 			</view>
+			
+			<view v-show="tabIndex == 3">
+				<view class="uni-list">
+				    <view class="uni-list-cell">
+				    	<view class="uni-list-cell-navigate">
+				    		<view class="left">
+				    			<image src="../../static/img/score.png" class="icon"></image>
+				    			积分
+				    		</view>
+				            <view class="right">
+				            	{{readerInfo.balance}}
+				            </view>
+				    	</view>
+				    </view>
+					<view class="uni-list-cell" v-for="(list,index) in listData" :key="index">
+						<view class="uni-list-cell-navigate uni-navigate-right" @tap="custom(list.event)">
+							<view class="left">
+								<image :src="list.icon" class="icon"></image>
+								{{list.title}}
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
 		</scroll-view>
 	</view>
 </template>
@@ -89,11 +113,28 @@
 		data() {
 			return {
 				scrollHeight: '',
-				tabIndex: 1,
+				tabIndex: 3,
 				openid: '',
 				readerInfo: [],
 				historyData: [],
-				collectData: []
+				collectData: [],
+				listData: [
+				    {
+				    	title: '充值',
+				    	icon: '../../static/img/recharge.png',
+				        event: 'goRecharge'
+				    },
+				    {
+				    	title: '充值记录',
+				    	icon: '../../static/img/pay.png',
+				        event: 'goRechargeNote'
+				    },
+				    {
+				    	title: '消费记录',
+				    	icon: '../../static/img/pay.png',
+				        event: 'goConsumeNote'
+				    }
+				]
 			};
 		},
 		onLoad() {
@@ -182,6 +223,24 @@
 					fail: () => {},
 					complete: () => {}
 				});
+			},
+			custom(e) {
+			    this[e]()
+			},
+			goRecharge() {
+				uni.navigateTo({
+					url: "../recharge/recharge"
+				})
+			},
+			goRechargeNote() {
+			    uni.navigateTo({
+			    	url: "../note-recharge/note-recharge"
+			    })
+			},
+			goConsumeNote() {
+			    uni.navigateTo({
+			    	url: "../note-consume/note-consume"
+			    })
 			},
 			goNotice() {
 				uni.navigateTo({
@@ -307,5 +366,24 @@
 	.info .bottom .notice image {
 		width: 15px;
 		height: 18px;
+	}
+	
+	/* 个人中心 */
+	.uni-list:before,
+	.uni-list:after{
+		height: 0upx;
+	}
+	.uni-list-cell-navigate {
+	    line-height: 2em;
+	}
+	.uni-list .left{
+	    display: flex;
+	    align-items: center;
+	    font-size: 28upx;
+	}
+	.uni-list .icon{
+	    width: 28px;
+	    height: 28px;
+	    margin-right: 10px;
 	}
 </style>
