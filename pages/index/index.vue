@@ -29,6 +29,7 @@
 						</view>
 					</view>
 				</view>
+				
 				<!-- 推荐 -->
 				<view class="recommend" v-for="(comic,index) in recommendComicData" :key="index" @tap="goInfo(comic)">
 					<view class="card cover">
@@ -54,14 +55,10 @@
 						</view>
 					</view>
 				</view>
+				
 				<!-- 专题 -->
 				<view v-for="(comic,index) in subjectComicData" :key="index">
-					<view class="subject-box" :class="{full:comic.id == fullId}" @tap="scale(comic.id)">
-						
-						<view class="close" v-if="comic.id == fullId" @tap="closeSubject">
-							<uni-icon size="30" type="clear" color="#8f8f94"></uni-icon>
-						</view>
-						
+					<view @tap="scale(comic.id)">
 						<view class="card subject">
 							<view class="content">
 								<view class="top">
@@ -76,34 +73,12 @@
 								</view>
 							</view>
 						</view>
-						
 						<view class="subject-title">
 							专题推荐：{{comic.subject_name}}
 						</view>
-						
-						<view class="recommend" v-if="comic.id == fullId" v-for="(c,i) in comic.comics" :key="i" @tap="goInfo(c)">
-							<view class="body">
-								<view class="head">
-									<image :src="c.head"></image>
-								</view>
-								<view class="content">
-									<view class="top">
-										<view class="title">
-											{{c.title}}
-										</view>
-										<view class="view">
-											<image src="../../static/img/fire.png"></image>
-											<text>{{c.popularity}}</text>
-										</view>
-									</view>
-									<view class="brief text-ellipsis">
-										{{c.brief}}
-									</view>
-								</view>
-							</view>
-						</view>
 					</view>
 				</view>
+				
 				<!-- 最近更新 -->
 				<view class="item update">
 					<view class="item-title">
@@ -123,6 +98,7 @@
 						</view>
 					</view>
 				</view>
+				
 				<!-- 猜你喜欢 -->
 				<view class="item like">
 					<view class="item-title">
@@ -147,6 +123,54 @@
 					</view>
 				</view>
 			</scroll-view>
+			
+			<!-- 专题弹窗 -->
+			<view  v-show="comic.id == fullId"
+				v-for="(comic,index) in subjectComicData" :key="index">
+				<view class="full">
+					<view class="close" @tap="closeSubject">
+						<uni-icon size="30" type="clear" color="#8f8f94"></uni-icon>
+					</view>
+					<view class="card subject">
+						<view class="content">
+							<view class="top">
+								<view class="top-box">
+									<image v-for="(img,i) in comic.top" :key="i" :src="img"></image>
+								</view>
+							</view>
+							<view class="bottom">
+								<view class="top-box" style="margin-left: -100upx;">
+									<image v-for="(img,i) in comic.bottom" :key="i" :src="img"></image>
+								</view>
+							</view>
+						</view>
+					</view>
+					<view class="subject-title">
+						专题推荐：{{comic.subject_name}}
+					</view>
+					<view class="recommend" v-for="(c,i) in comic.comics" :key="i" @tap="goInfo(c)">
+						<view class="body">
+							<view class="head">
+								<image :src="c.head"></image>
+							</view>
+							<view class="content">
+								<view class="top">
+									<view class="title">
+										{{c.title}}
+									</view>
+									<view class="view">
+										<image src="../../static/img/fire.png"></image>
+										<text>{{c.popularity}}</text>
+									</view>
+								</view>
+								<view class="brief text-ellipsis">
+									{{c.brief}}
+								</view>
+							</view>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
 
 		<!-- 画册 -->
@@ -528,8 +552,9 @@
 <style>
 	.close {
 		position: fixed;
-		top: 12px;
-		right: 12px;
+		top: 8px;
+		right: 8px;
+		z-index: 9999;
 	}
 	.full {
 		position: fixed;
@@ -539,10 +564,11 @@
 		right: 0;
 		z-index: 999;
 		background-color: #FFF;
+		overflow-y: scroll;
 	}
 	.full .card {
 		box-shadow: none;
-		margin: 25px 10px 10px 10px;
+		margin: 25px 0 10px 0;
 	}
 	.full .subject-title,
 	.full .recommend {
