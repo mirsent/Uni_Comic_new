@@ -71,7 +71,10 @@
 									<view class="grace-comment-date">
 										{{c.comment_time}}
 									</view>
-									<view class="grace-comment-content">{{c.comment_content}}</view>
+									<view class="grace-comment-content">
+										<text v-if="i != 0">回复{{c.replyname}}：</text>
+										{{c.comment_content}}
+									</view>
 									<view class="grace-comment-footer">
 										<text @tap="reply(c)">回复</text>
 									</view>

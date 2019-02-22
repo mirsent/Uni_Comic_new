@@ -131,7 +131,7 @@
 		</view>
 		
 		<!-- 回复模板 -->
-		<view class="comment-template" v-if="isCommentTemplate" @tap="cancleReply">
+		<view class="comment-template" v-if="isReplyTemplate" @tap="cancleReply">
 			<view class="comment-body" @tap.stop="">
 				<input type="text" value="" :placeholder="replyWho" class="comment-input" @input="commentChange" />
 				<text class="comment-btn" @tap="confirmReply">发表</text>
@@ -197,7 +197,7 @@
                 proxyOpenid: '',
 				
 				// 回复
-				isCommentTemplate: false,
+				isReplyTemplate: false,
 				comment: '',
 				replyParent: [],
 				replyWho: ''
@@ -325,13 +325,13 @@
 				this.comment = e.detail.value
 			},
 			reply(e) {
-				this.isCommentTemplate = true
+				this.isReplyTemplate = true
 				this.replyParent = e
 				this.replyWho = '回复：'+e.nickname
 				console.log(e);
 			},
 			cancleReply() {
-				this.isCommentTemplate = false
+				this.isReplyTemplate = false
 			},
 			confirmReply() {
 				if (this.comment.length < 1) {
@@ -378,7 +378,7 @@
 				        		mask: false,
 				        		duration: 1500
 				        	});
-				            this.isCommentTemplate = false
+				            this.isReplyTemplate = false
 				            this.getCommentInfo()
 				        }
 				    },

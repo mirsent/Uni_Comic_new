@@ -206,15 +206,19 @@
 										<text class="info-name">{{gather.nickname}}</text>
 									</view>
 									<view class="like-box">
+										<!-- 心形 -->
 										<image class="like-icon" src="../../static/img/collect_on.png"
 											v-if="gather.is_like" 
 											@tap="cancelLikeGather(gather.id)">
 										</image>
-										<image class="like-icon" src="../../static/img/collect_red.png"
+										<image class="like-icon" src="../../static/img/like.png"
 											 v-else
 											 @tap="likeGather(gather.id)">
 										</image>
 										<text>{{gather.likes}}</text>
+										<!-- 评论 -->
+										<image class="like-icon" src="../../static/img/comment.png" @tap="commentGather(gather)"></image>
+										<text><text>{{gather.comments}}</text></text>
 									</view>
 								</view>
 							</view>
@@ -234,15 +238,19 @@
 										<text class="info-name">{{gather.nickname}}</text>
 									</view>
 									<view class="like-box">
+										<!-- 心形 -->
 										<image class="like-icon" src="../../static/img/collect_on.png"
 											v-if="gather.is_like" 
 											@tap="cancelLikeGather(gather.id)">
 										</image>
-										<image class="like-icon" src="../../static/img/collect_red.png"
+										<image class="like-icon" src="../../static/img/like.png"
 											 v-else
 											 @tap="likeGather(gather.id)">
 										</image>
 										<text>{{gather.likes}}</text>
+										<!-- 评论 -->
+										<image class="like-icon" src="../../static/img/comment.png" @tap="commentGather(gather)"></image>
+										<text><text>{{gather.comments}}</text></text>
 									</view>
 								</view>
 							</view>
@@ -251,6 +259,14 @@
 				</view>
 			</scroll-view>
 			
+		</view>
+		
+		<!-- 评论模板 -->
+		<view class="comment-template" v-if="isCommentTemplate" @tap="cancleComment">
+			<view class="comment-body" @tap.stop="">
+				<input type="text" value="" :placeholder="commentWho" class="comment-input" @input="commentChange" />
+				<text class="comment-btn" @tap="confirmComment">发表</text>
+			</view>
 		</view>
 		
 		<button class="login-btn" open-type="getUserInfo" v-if="!authed" @getuserinfo="login"></button>
@@ -272,6 +288,12 @@
 				loading: false,
 				
 				fullId: '',
+				
+				// 评论
+				isCommentTemplate: false,
+				comment: '',
+				commentWho: '',
+				gatherInfo: [],
 				
 				scrollStartFindY: '',
 				scrollStartFindTop: '',
@@ -498,6 +520,61 @@
 					}
 				});
 			},
+			// 评论
+			commentGather(e) {
+				this.gatherInfo = e
+				this.isCommentTemplate = true
+				this.commentWho = '评论：'+e.gather_title
+			},
+			commentChange(e) {
+				this.comment = e.detail.value
+			},
+			cancleComment() {
+				this.isCommentTemplate = false
+			},
+			confirmComment() {
+				if (this.comment.length < 1) {
+					uni.showToast({
+						title: '请输入评论内容',
+				        icon: 'none',
+						mask: false,
+						duration: 1500
+					});
+				    return
+				}
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
+				uni.request({
+					url: this.$requestUrl+'Reader/comment',
+					method: 'POST',
+					header: {
+						'content-type': 'application/x-www-form-urlencoded'
+					},
+					data: {
+				        gather_id: this.gatherInfo.id,
+				        openid: this.readerInfo.openid,
+				        comment_content: this.comment
+				    },
+					success: res => {
+				        if (res.data.status == 1) {
+							this.isCommentTemplate = false
+				        	uni.showToast({
+				        		title: '评论成功',
+				        		mask: false,
+				        		duration: 1500
+				        	});
+				            this.getGather()
+				        }
+				    },
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
+			// end 评论
 			goInfo(e) {
 				let detail = {
 					comic_id: e.id,
@@ -571,6 +648,7 @@
 </script>
 
 <style>
+	@import "../../common/comment.css";
 	.close {
 		position: fixed;
 		top: 10px;
@@ -941,7 +1019,7 @@
 	.collect .like-box .like-icon {
 		width: 14px;
 		height: 14px;
-		margin-right: 3px;
+		margin: 0 3px;
 	}
 	
 	.collect .info-box .info-head {
