@@ -25,7 +25,7 @@
 							{{newComicInfo.title}}
 						</view>
 						<view class="brief text-2-ellipsis">
-							<rich-text :nodes="newComicInfo.brief"></rich-text>
+                            {{newComicInfo.brief}}
 						</view>
 					</view>
 				</view>
