@@ -33,7 +33,7 @@
 								<text @tap="reply(r)">回复</text>
 							</view>
 							<view class="grace-comment-brief">
-								漫画：名侦探柯南
+								漫画：{{r.comic_title}}
 							</view>
 						</view>
 					</view>
@@ -296,6 +296,7 @@
 </script>
 
 <style>
+	@import "../../common/comment.css";
 	.notice-list {
 		padding: 10px;
 		border-radius: 5px;
@@ -325,54 +326,15 @@
 	.comment-item{
 		padding: 10px;
 	}
-	.grace-comment-sub{
-		background-color: #FAFAFA;
-		padding: 10px;
-		margin-left: 30px;
-	}
-	.grace-comment-sub .grace-comment-list + .grace-comment-list{
-		border-top: 1px solid #f1f1f1;
-	}
-	.grace-comment-list {
-		display: flex;
-		flex-wrap: nowrap;
-		padding: 10px 0;
-	}
-	.grace-comment-face {
-		width: 70upx;
-		height: 70upx;
-		border-radius: 100%;
-		margin-right: 20upx;
-		flex-shrink: 0;
-		overflow: hidden;
-	}
-	.grace-comment-face image {
-		width: 100%;
-		border-radius: 100%;
-	}
-	.grace-comment-body {
-		width: 100%;
-	}
-	.grace-comment-name {
-		color: #0A98D5;
-		font-size: 24upx;
-		margin-bottom: 5px;
-	}
 	.grace-comment-date {
-		color: #666666;
-		font-size: 20upx;
 		margin-bottom: 5px;
 	}
 	.grace-comment-content {
-		line-height: 1.6em;
-		font-size: 28upx;
 		margin-bottom: 8px;
 	}
 	.grace-comment-footer{
 		display: flex;
 		justify-content: space-between;
-		font-size: 28upx;
-		color: #666;
 		margin-bottom: 10px;
 	}
 	.grace-comment-brief{
@@ -381,33 +343,6 @@
 		padding: 10px;
 	}
 	
-	/* 评论模板 */
-	.comment-template{
-		position: fixed;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 999;
-		background-color: rgba(0,0,0,.5);
-		display: flex;
-		align-items: flex-end;
-	}
-	.comment-body{
-		width: 100%;
-		padding: 20px;
-		background-color: #FFF;
-		display: flex;
-		align-items: center;
-	}
-	.comment-input{
-		font-size: 28upx;
-		flex: 1;
-		margin-right: 10px;
-	}
-	.comment-btn{
-		font-size: 28upx;
-	}
 	
 	.reply-template {
 		position: fixed;

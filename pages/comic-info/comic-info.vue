@@ -108,7 +108,10 @@
 											<view class="grace-comment-date">
 												{{c.comment_time}}
 											</view>
-											<view class="grace-comment-content">{{c.comment_content}}</view>
+											<view class="grace-comment-content">
+												<text v-if="i != 0">回复{{c.replyname}}：</text>
+												{{c.comment_content}}
+											</view>
 											<view class="grace-comment-footer">
 												<text @tap="reply(c)">回复</text>
 											</view>
@@ -375,15 +378,14 @@
 				        		mask: false,
 				        		duration: 1500
 				        	});
-				            setTimeout(()=>{
-				                this.isCommentTemplate = false
-								this.getCommentInfo()
-								uni.hideLoading()
-				            }, 1500)
+				            this.isCommentTemplate = false
+				            this.getCommentInfo()
 				        }
 				    },
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			showDetail() {
@@ -449,6 +451,10 @@
 				})
 			},
 			like() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
 				uni.request({
 					url: this.$requestUrl+'Reader/like',
 					method: 'POST',
@@ -476,10 +482,16 @@
 						}
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			cancelLike() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
 				uni.request({
 					url: this.$requestUrl+'Reader/cancel_like',
 					method: 'GET',
@@ -503,10 +515,16 @@
 						}
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			collect() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
 				uni.request({
 					url: this.$requestUrl+'Reader/collect',
 					method: 'POST',
@@ -534,10 +552,16 @@
 						}
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			cancelCollect() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
 				uni.request({
 					url: this.$requestUrl+'Reader/cancel_collect',
 					method: 'GET',
@@ -561,7 +585,9 @@
 						}
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
             goComment() {
@@ -603,6 +629,7 @@
 </script>
 
 <style>
+	@import "../../common/comment.css";
 	page {
 		background: #FFF;
 	}
@@ -787,127 +814,10 @@
 	.comment {
 		padding-top: 15px;
 	}
-
-	.comment-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 10px;
-	}
-
-	.comment-header .title {
-		font-size: 32upx;
-		color: #919191;
-	}
-
-	.comment-header .write {
-		font-size: 28upx;
-		color: #E27C6B;
-	}
-
+	
 	.grace-padding {
 		padding: 2%;
 		width: 96%;
-	}
-	
-	.comment-item{
-		padding: 20px 0;
-		border-bottom: 1px solid #f1f1f1;
-	}
-	
-	.grace-comment-sub{
-		background-color: #FAFAFA;
-		padding: 10px;
-		margin-left: 30px;
-	}
-	.grace-comment-sub .grace-comment-list + .grace-comment-list{
-		border-top: 1px solid #f1f1f1;
-	}
-
-	.grace-comment-list {
-		display: flex;
-		flex-wrap: nowrap;
-		padding: 10px 0;
-	}
-
-	.grace-comment-face {
-		width: 70upx;
-		height: 70upx;
-		border-radius: 100%;
-		margin-right: 20upx;
-		flex-shrink: 0;
-		overflow: hidden;
-	}
-
-	.grace-comment-face image {
-		width: 100%;
-		border-radius: 100%;
-	}
-
-	.grace-comment-body {
-		width: 100%;
-	}
-
-	.grace-comment-name {
-		color: #0A98D5;
-		font-size: 24upx;
-		margin-bottom: 5px;
-	}
-
-	.grace-comment-date {
-		color: #666666;
-		font-size: 20upx;
-	}
-
-	.grace-comment-content {
-		line-height: 1.6em;
-		font-size: 28upx;
-	}
-	.grace-comment-footer{
-		text-align: right;
-		font-size: 28upx;
-		color: #666;
-	}
-
-	.grace-comment-zan {
-		color: #0A98D5 !important;
-	}
-
-	.grace-comment-replay-btn {
-		background: #F4F5F6;
-		font-size: 24upx;
-		padding: 8upx 15upx;
-		border-radius: 30upx;
-		color: #333 !important;
-		margin: 0 10upx;
-	}
-	
-	/* 评论模板 */
-	.comment-template{
-		position: fixed;
-		top: 0;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		z-index: 999;
-		background-color: rgba(0,0,0,.5);
-		display: flex;
-		align-items: flex-end;
-	}
-	.comment-body{
-		width: 100%;
-		padding: 20px;
-		background-color: #FFF;
-		display: flex;
-		align-items: center;
-	}
-	.comment-input{
-		font-size: 28upx;
-		flex: 1;
-		margin-right: 10px;
-	}
-	.comment-btn{
-		font-size: 28upx;
 	}
 
 	.uni-media-list {

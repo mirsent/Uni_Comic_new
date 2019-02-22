@@ -66,4 +66,10 @@
 	.login-btn:after{
 	    border: 0;
 	}
+	
+	.btn-hover{
+		position: relative;
+		top: 1px;
+		box-shadow:0px 0px 8px #999 inset;
+	}
 </style>

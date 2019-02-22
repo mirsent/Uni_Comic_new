@@ -147,7 +147,6 @@
 				success (res){
 					if (res.authSetting['scope.userInfo']) {
 			            _this.authed = true;
-						_this.readerInfo = readerInfo;
 					}
 				}
 			})
@@ -169,7 +168,30 @@
 				}
 			})
 		},
+		onShow() {
+			this.getReader()
+		},
 		methods: {
+			getReader() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
+				uni.request({
+					url: this.$requestUrl+'Reader/get_reader_info',
+					method: 'GET',
+					data: {
+						reader_id: this.readerInfo.id
+					},
+					success: res => {
+						this.readerInfo = res.data.data
+					},
+					fail: () => {},
+					complete: () => {
+						uni.hideLoading()
+					}
+				});
+			},
 			getHistory() {
 			    uni.request({
 			    	url: this.$requestUrl+'Comic/get_history_info',

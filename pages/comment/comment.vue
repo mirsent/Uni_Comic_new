@@ -48,6 +48,10 @@
                 	});
                     return
                 }
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
                 uni.request({
                 	url: this.$requestUrl+'Comic/comment',
                 	method: 'POST',

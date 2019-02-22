@@ -18,7 +18,7 @@
 				<!-- 最新漫画 -->
 				<view class="card card-2" @tap="goInfo(newComicInfo)">
 					<view class="cover">
-						<image :src="newComicInfo.cover"></image>
+						<image :src="newComicInfo.cover" mode="widthFix"></image>
 					</view>
 					<view class="content">
 						<view class="title text-2-ellipsis">
@@ -115,8 +115,8 @@
 						</view>
 					</view>
 					<view class="btn-group">
-						<button @tap="goType">查看更多</button>
-						<button @tap="getLikeComic">
+						<button hover-class="btn-hover" @tap="goType">查看更多</button>
+						<button hover-class="btn-hover" @tap="getLikeComic">
 							<uni-icon size="14" type="loop" color="#7F7F7F"></uni-icon>
 							换一换
 						</button>
@@ -128,8 +128,14 @@
 			<view  v-show="comic.id == fullId"
 				v-for="(comic,index) in subjectComicData" :key="index">
 				<view class="full">
+					<view class="subject-title">
+						<view class="subject-label">
+							专题
+						</view>
+						{{comic.subject_name}}
+					</view>
 					<view class="close" @tap="closeSubject">
-						<uni-icon size="30" type="clear" color="#8f8f94"></uni-icon>
+						<uni-icon size="30" type="clear" color="#595959"></uni-icon>
 					</view>
 					<view class="card subject">
 						<view class="content">
@@ -145,8 +151,8 @@
 							</view>
 						</view>
 					</view>
-					<view class="subject-title">
-						专题推荐：{{comic.subject_name}}
+					<view class="subject-brief">
+						{{comic.subject_brief}}
 					</view>
 					<view class="recommend" v-for="(c,i) in comic.comics" :key="i" @tap="goInfo(c)">
 						<view class="body">
@@ -190,7 +196,7 @@
 						<view class="item" v-for="(gather,index) in gatherData.left" :key="index"
 							@tap="goGatherDetail(gather)">
 							<image class="item-img" :src="gather.url" mode="widthFix"></image>
-							<view class="item-info">
+							<view class="item-info" @tap.stop="">
 								<view class="item-title">
 									{{gather.gather_title}}
 								</view>
@@ -199,9 +205,15 @@
 										<image class="info-head" :src="gather.head"></image>
 										<text class="info-name">{{gather.nickname}}</text>
 									</view>
-									<view class="like-box" @tap="likeGather(gather.id)">
-										<image v-if="gather.is_like" class="like-icon" src="../../static/img/collect_on.png"></image>
-										<image v-else class="like-icon" src="../../static/img/collect_red.png"></image>
+									<view class="like-box">
+										<image class="like-icon" src="../../static/img/collect_on.png"
+											v-if="gather.is_like" 
+											@tap="cancelLikeGather(gather.id)">
+										</image>
+										<image class="like-icon" src="../../static/img/collect_red.png"
+											 v-else
+											 @tap="likeGather(gather.id)">
+										</image>
 										<text>{{gather.likes}}</text>
 									</view>
 								</view>
@@ -212,7 +224,7 @@
 						<view class="item" v-for="(gather,index) in gatherData.right" :key="index"
 							@tap="goGatherDetail(gather)">
 							<image class="item-img" :src="gather.url" mode="widthFix"></image>
-							<view class="item-info">
+							<view class="item-info" @tap.stop="">
 								<view class="item-title">
 									{{gather.gather_title}}
 								</view>
@@ -252,7 +264,7 @@
 	export default {
 		data() {
 			return {
-				tabIndex: 1,
+				tabIndex: 2,
                 authed: false,
 				scrollTop: 0,
 				scrollHeightFind: '',
@@ -290,8 +302,6 @@
 			})
 			this.code_2_session();
 			// #endif
-			
-			this.animation = uni.createAnimation()
 		},
 		onReady() {
 			uni.getSystemInfo({
@@ -312,46 +322,6 @@
 			})
 		},
 		methods: {
-			scale(e) {
-				this.fullId = e;
-			},
-			closeSubject() {
-				this.fullId = ''
-			},
-			startFind(e){
-				let _this = this;
-				_this.scrollStartFindY = e.clientY;
-				uni.createSelectorQuery().select('#scrollFind').fields({
-					scrollOffset: true,
-					size: true
-				}, data => {
-					_this.scrollStartFindTop = data.scrollTop;
-				}).exec();
-			},
-			moveFind(e) {
-				let scrollEndY = e.mp.changedTouches[0].clientY
-				if (this.scrollStartFindTop == 0 && scrollEndY - this.scrollStartFindY > 20) {
-					this.loading = true;
-					this.getData()
-				}
-			},
-			startCollect(e){
-				let _this = this;
-				_this.scrollStartCollectY = e.clientY;
-				uni.createSelectorQuery().select('#scrollCollect').fields({
-					scrollOffset: true,
-					size: true
-				}, data => {
-					_this.scrollStartCollectTop = data.scrollTop;
-				}).exec();
-			},
-			moveCollect(e) {
-				let scrollEndY = e.mp.changedTouches[0].clientY
-				if (this.scrollStartCollectTop == 0 && scrollEndY - this.scrollStartCollectY > 20) {
-					this.loading = true;
-					this.getGather()
-				}
-			},
 			code_2_session() {
 				uni.showLoading();
 			    uni.login({
@@ -372,7 +342,12 @@
 			                    service.addUser(readerInfo);
 			                    this.readerInfo = readerInfo;
 								
+								if (!readerInfo.nickname) {
+									this.authed = false;
+								}
+								
 								this.getData()
+								this.getGather()
 			                },
 			            	fail: () => {},
 			            	complete: () => {
@@ -391,7 +366,7 @@
 			    			'content-type': 'application/x-www-form-urlencoded'
 			    		},
 			    		data: {
-			    			openid: this.openid,
+			    			openid: this.readerInfo.openid,
 			    			nickname: e.detail.userInfo.nickName,
 			    			head: e.detail.userInfo.avatarUrl
 			    		},
@@ -414,6 +389,10 @@
 				this.tabIndex = 2;
 			},
 			getLikeComic() {
+				uni.showLoading({
+					title: '',
+					mask: false
+				});
 				uni.request({
 					url: this.$requestUrl+'Comic/get_like_comic',
 					method: 'GET',
@@ -424,7 +403,9 @@
 						this.likeComicData = res.data.data
 					},
 					fail: () => {},
-					complete: () => {}
+					complete: () => {
+						uni.hideLoading()
+					}
 				});
 			},
 			getData() {
@@ -544,6 +525,46 @@
 				uni.navigateTo({
 					url: "../gather-add/gather-add"
 				})
+			},
+			scale(e) {
+				this.fullId = e;
+			},
+			closeSubject() {
+				this.fullId = ''
+			},
+			startFind(e){
+				let _this = this;
+				_this.scrollStartFindY = e.clientY;
+				uni.createSelectorQuery().select('#scrollFind').fields({
+					scrollOffset: true,
+					size: true
+				}, data => {
+					_this.scrollStartFindTop = data.scrollTop;
+				}).exec();
+			},
+			moveFind(e) {
+				let scrollEndY = e.mp.changedTouches[0].clientY
+				if (this.scrollStartFindTop == 0 && scrollEndY - this.scrollStartFindY > 20) {
+					this.loading = true;
+					this.getData()
+				}
+			},
+			startCollect(e){
+				let _this = this;
+				_this.scrollStartCollectY = e.clientY;
+				uni.createSelectorQuery().select('#scrollCollect').fields({
+					scrollOffset: true,
+					size: true
+				}, data => {
+					_this.scrollStartCollectTop = data.scrollTop;
+				}).exec();
+			},
+			moveCollect(e) {
+				let scrollEndY = e.mp.changedTouches[0].clientY
+				if (this.scrollStartCollectTop == 0 && scrollEndY - this.scrollStartCollectY > 20) {
+					this.loading = true;
+					this.getGather()
+				}
 			}
 		}
 	}
@@ -552,8 +573,8 @@
 <style>
 	.close {
 		position: fixed;
-		top: 8px;
-		right: 8px;
+		top: 10px;
+		right: 10px;
 		z-index: 9999;
 	}
 	.full {
@@ -568,12 +589,32 @@
 	}
 	.full .card {
 		box-shadow: none;
-		margin: 25px 0 10px 0;
+		margin: 10px 0 10px 0;
 	}
-	.full .subject-title,
+	.full .subject-label {
+		font-size: 36upx;
+		color: #8E8E93;
+		margin-bottom: 5px;
+	}
+	.full .subject-title {
+		font-size: 42upx;
+		margin: 15px;
+		font-weight: bold;
+		padding-bottom: 0;
+		border-bottom: none;
+	}
+	.full .subject-brief {
+		font-size: 36upx;
+		color: #838387;
+		line-height: 1.5;
+		margin: 20px 15px;
+	}
 	.full .recommend {
 		margin-left: 15px;
 		margin-right: 15px;
+	}
+	.full .recommend .content .brief {
+		font-size: 28upx;
 	}
 	
 	.loading {
@@ -643,10 +684,9 @@
 	/* card-2 */
 	.card-2 .cover {
 		height: 220px;
-	}
-
-	.card-2 .cover image {
-		width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.card-2 .title {
@@ -899,9 +939,9 @@
 	
 	.collect .info-box .info-head,
 	.collect .like-box .like-icon {
-		width: 16px;
-		height: 16px;
-		margin-right: 5px;
+		width: 14px;
+		height: 14px;
+		margin-right: 3px;
 	}
 	
 	.collect .info-box .info-head {
