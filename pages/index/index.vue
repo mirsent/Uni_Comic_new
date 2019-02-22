@@ -280,7 +280,7 @@
 	export default {
 		data() {
 			return {
-				tabIndex: 2,
+				tabIndex: 1,
                 authed: false,
 				scrollTop: 0,
 				scrollHeightFind: '',
@@ -369,7 +369,6 @@
 								}
 								
 								this.getData()
-								this.getGather()
 			                },
 			            	fail: () => {},
 			            	complete: () => {
@@ -642,6 +641,18 @@
 					this.loading = true;
 					this.getGather()
 				}
+			}
+		},
+		onShareAppMessage() {
+		    let detail = {};
+		    let isProxy = this.readerInfo.is_proxy;
+		    if (isProxy) {
+		    	detail.proxy_openid = this.readerInfo.openid;
+		    }
+			return {
+				title: '爱漫',
+				imageUrl: this.newComicInfo.cover,
+				path: '/pages/index/index?detailData=' + JSON.stringify(detail)
 			}
 		}
 	}

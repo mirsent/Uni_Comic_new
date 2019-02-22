@@ -116,6 +116,11 @@
                 "path" : "pages/comic-info/comic-info",
                 "query" : "detailData={\"comic_id\":\"6\",\"title\":\"21世纪大地震\"}"
             },
+			{
+			    "name" : "comic-detail",
+			    "path" : "pages/comic-detail/comic-detail",
+			    "query" : "detailData={\"comic_id\":\"1\",\"title\":\"龙珠 巴达克 AFTER\",\"chapter\":\"1\",\"cover\":\"http://comic.ineinv.com/Uploads/image/2018-11-26/5bfb5576c876a.jpg\"}"
+			},
             {
                 "name" : "gather-detail",
                 "path" : "pages/gather-detail/gather-detail",

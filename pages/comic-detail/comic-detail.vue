@@ -1,21 +1,35 @@
 <template>
-	<view class="page">
+	<view class="page" @tap="click">
         <view class="article-content">
-        	<image lazy-load :src="imgPrefix+img" mode="widthFix"
+        	<image :src="imgPrefix+img" mode="widthFix"
                  v-for="(img, index) in imgs" :key="index"
                  :class="{hide: needRelease && index > 1}">
             </image>
         </view>
-        <view class="btn-group" v-show="isLoaded">
+		
+        <view class="btn-group" v-show="isControl">
+			<button type="default" v-if="chapter == 1" disabled>第一章</button>
+			<button type="default" v-else @tap="prev">上一章</button>
         	<picker class="picker-item" mode="selector" :range="chapterData" :value="chapterIndex" range-key="catalog_name"
         	@change="chapterChange">
         		<button type="default">目录</button>
         	</picker>
-        	<button type="default" v-if="chapter != 1" @tap="prev">上一章</button>
-        	<button type="default" v-if="chapter != chapterLast" @tap="next">下一章</button>
-        	<button type="default" v-if="chapter == chapterLast" @tap="home">回到首页</button>
+			<button type="default" v-if="chapter == chapterLast" disabled>最末章</button>
+        	<button type="default" v-else @tap="next">下一章</button>
         </view>
-        
+		
+		<view class="action" v-show="isControl">
+			<view class="action-item" @tap="goHome">
+				<image src="../../static/img/home.png"></image>
+				首页
+			</view>
+			<view class="action-item">
+				<button type="primary" open-type="share">
+					<image src="../../static/img/share.png"></image>
+					分享
+				</button>
+			</view>
+		</view>
         
         <view class="mask" v-if="showRelease" :catchtouchmove="false">
         	<view class="auth">
@@ -63,7 +77,7 @@
                 chapterData: [],
                 chapterLast: '',
                 imgs: [],
-                isLoaded: false,
+                isControl: false,
                 
                 shareCover: '',
                 
@@ -104,12 +118,20 @@
         		this.noteShare();
         	}
         },
+		onPageScroll() {
+			this.isControl = false
+		},
         onReachBottom(){
             if (this.needRelease) {
             	this.showRelease = true;
             }
+			// 显示控制板
+			this.isControl = true
         },
 		methods: {
+			click() {
+				this.isControl = !this.isControl
+			},
             reading() {
             	uni.request({
             		url: this.$requestUrl+'Comic/reading',
@@ -132,13 +154,12 @@
             			console.log('呀，当前网络状况不好');
             		},
             		complete: () => {
-                        this.isLoaded = true;
             			uni.hideLoading();
             		}
             	})
             },
+			// 验证权限
             checkAuth() {
-            	// 验证权限
             	uni.request({
             		url: this.$requestUrl+'Comic/check_auth',
             		method: 'GET',
@@ -280,7 +301,7 @@
 				let chapterCur = parseInt(e.detail.value) + 1;
                 this.redirectTo(chapterCur);
 			},
-            home() {
+            goHome() {
                 uni.reLaunch({
                     url: '../index/index'
                 });
@@ -327,7 +348,6 @@
 
 <style>
 	.page {
-		background: #efeff4;
 		padding: 0 10upx;
 	}
     
@@ -366,15 +386,31 @@
 	}
 
 	.btn-group {
+		position: fixed;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 40px;
 		display: flex;
 		justify-content: space-around;
+		align-items: center;
+		background-color: #FFF;
+		border-top: 1px solid #E6E6E6;
 	}
 
 	.btn-group button {
-		width: 200upx;
-		font-size: 32upx;
-		margin-left: 0;
-		margin-right: 0;
+		font-size: 28upx;
+		margin: 0;
+		color: #9A9A9A;
+		background-color: #FFF;
+	}
+	
+	.btn-group button[disabled] {
+		background-color: #FFF;
+	}
+	
+	.btn-group button:after{
+		border: 0;
 	}
     
     .mask{
@@ -441,5 +477,40 @@
         padding: 10px 20px;
         border-top: 1px solid rgba(136,136,136,.1);
     }
-        
+	
+	/* 右侧 */
+	.action {
+		position: fixed;
+		bottom: 100px;
+		right: 15px;
+	}
+	.action-item {
+		font-size: 20upx;
+		color: #FFF;
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		background: rgba(0,0,0,.4);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		margin-bottom: 8px;
+	}
+	.action-item image {
+		width: 18px;
+		height: 18px;
+	}
+	.action-item button {
+		margin: 0;
+		padding: 0;
+		line-height: 1;
+		background-color: transparent;
+		font-size: 20upx;
+		display: flex;
+		flex-direction: column;
+	}
+	.action-item button:after {
+		border: 0;
+	}
 </style>

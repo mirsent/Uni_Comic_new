@@ -233,6 +233,7 @@
 			this.getComicInfo();
 		},
         onShow() {
+			// 评论内容
         	this.getCommentInfo();
         },
         onPageScroll(e) {
