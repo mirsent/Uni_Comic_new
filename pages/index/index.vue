@@ -323,6 +323,7 @@
 				}
 			})
 			this.code_2_session();
+			this.getData();
 			// #endif
 		},
 		onReady() {
@@ -345,7 +346,6 @@
 		},
 		methods: {
 			code_2_session() {
-				uni.showLoading();
 			    uni.login({
 			    	provider: 'weixin',
 			    	success: res => {
@@ -367,13 +367,9 @@
 								if (!readerInfo.nickname) {
 									this.authed = false;
 								}
-								
-								this.getData()
 			                },
 			            	fail: () => {},
-			            	complete: () => {
-								uni.hideLoading()
-							}
+			            	complete: () => {}
 			            });
 			        }
 			    });
@@ -650,7 +646,7 @@
 		    	detail.proxy_openid = this.readerInfo.openid;
 		    }
 			return {
-				title: '爱漫',
+				title: '这里有超多经典漫画免费看，想看什么可以告诉我~来吧！',
 				imageUrl: this.newComicInfo.cover,
 				path: '/pages/index/index?detailData=' + JSON.stringify(detail)
 			}
@@ -772,7 +768,7 @@
 
 	/* card-2 */
 	.card-2 .cover {
-		height: 220px;
+		height: 200px;
 		display: flex;
 		justify-content: center;
 		align-items: center;

@@ -80,9 +80,29 @@
 				</view>
 			</view>
 			
+			<!-- 个人中心 -->
 			<view v-show="tabIndex == 3">
 				<view class="uni-list">
-				    <view class="uni-list-cell">
+					<view class="uni-list-cell" @tap="goGatherCollect">
+						<view class="uni-list-cell-navigate">
+							<view class="left">
+								<image src="../../static/img/star.png" class="icon"></image>
+								画册集
+							</view>
+					        <view class="right">
+					        	{{readerInfo.gather_n}}个
+					        </view>
+						</view>
+					</view>
+					<view class="uni-list-cell" @tap="goWish">
+						<view class="uni-list-cell-navigate uni-navigate-right">
+							<view class="left">
+								<image src="../../static/img/need.png" class="icon"></image>
+								需求墙
+							</view>
+						</view>
+					</view>
+				    <!-- <view class="uni-list-cell">
 				    	<view class="uni-list-cell-navigate">
 				    		<view class="left">
 				    			<image src="../../static/img/score.png" class="icon"></image>
@@ -92,15 +112,15 @@
 				            	{{readerInfo.balance}}
 				            </view>
 				    	</view>
-				    </view>
-					<view class="uni-list-cell" v-for="(list,index) in listData" :key="index">
+				    </view> -->
+					<!-- <view class="uni-list-cell" v-for="(list,index) in listData" :key="index">
 						<view class="uni-list-cell-navigate uni-navigate-right" @tap="custom(list.event)">
 							<view class="left">
 								<image :src="list.icon" class="icon"></image>
 								{{list.title}}
 							</view>
 						</view>
-					</view>
+					</view> -->
 				</view>
 			</view>
 		</scroll-view>
@@ -249,6 +269,16 @@
 			custom(e) {
 			    this[e]()
 			},
+			goGatherCollect() {
+				uni.navigateTo({
+					url: "../gather-collect/gather-collect"
+				})
+			},
+			goWish() {
+				uni.navigateTo({
+					url: "../wish/wish"
+				})
+			},
 			goRecharge() {
 				uni.navigateTo({
 					url: "../recharge/recharge"
@@ -392,20 +422,24 @@
 	
 	/* 个人中心 */
 	.uni-list:before,
-	.uni-list:after{
+	.uni-list:after {
 		height: 0upx;
 	}
 	.uni-list-cell-navigate {
 	    line-height: 2em;
 	}
-	.uni-list .left{
+	.uni-list .left {
 	    display: flex;
 	    align-items: center;
-	    font-size: 28upx;
+	    font-size: 32upx;
 	}
-	.uni-list .icon{
-	    width: 28px;
-	    height: 28px;
-	    margin-right: 10px;
+	.uni-list .right {
+		color: #C2C2C2;
+		font-size: 32upx;
+	}
+	.uni-list .icon {
+	    width: 25px;
+	    height: 25px;
+	    margin-right: 20px;
 	}
 </style>

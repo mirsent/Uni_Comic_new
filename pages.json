@@ -41,8 +41,8 @@
         {
             "path" : "pages/gather-add/gather-add",
             "style" : {
-				"navigationBarTitleText" : "发布画册"
-			}
+                "navigationBarTitleText" : "发布画册"
+            }
         },
         {
             "path" : "pages/comment/comment",
@@ -55,19 +55,37 @@
         {
             "path" : "pages/note-recharge/note-recharge",
             "style" : {
-				"navigationBarTitleText" : "充值记录"
-			}
+                "navigationBarTitleText" : "充值记录"
+            }
         },
         {
             "path" : "pages/note-consume/note-consume",
             "style" : {
-				"navigationBarTitleText" : "消费记录"
-			}
+                "navigationBarTitleText" : "消费记录"
+            }
         },
         {
             "path" : "pages/recharge/recharge",
             "style" : {
-				"navigationBarTitleText" : "充值"
+                "navigationBarTitleText" : "充值"
+            }
+        },
+        {
+            "path" : "pages/gather-collect/gather-collect",
+            "style" : {
+                "navigationBarTitleText" : "画册集"
+            }
+        },
+        {
+            "path" : "pages/wish/wish",
+            "style" : {
+                "navigationBarTitleText" : "需求墙"
+            }
+        },
+        {
+            "path" : "pages/wish-add/wish-add",
+            "style" : {
+				"navigationBarTitleText" : "发布需求"
 			}
         }
     ],
@@ -95,6 +113,10 @@
                 "path" : "pages/gather-add/gather-add"
             },
             {
+                "name" : "gather-collect",
+                "path" : "pages/gather-collect/gather-collect"
+            },
+            {
                 "name" : "note-recharge",
                 "path" : "pages/note-recharge/note-recharge"
             },
@@ -107,6 +129,14 @@
                 "path" : "pages/recharge/recharge"
             },
             {
+                "name" : "wish",
+                "path" : "pages/wish/wish"
+            },
+            {
+                "name" : "wish-add",
+                "path" : "pages/wish-add/wish-add"
+            },
+            {
                 "name" : "comment",
                 "path" : "pages/comment/comment",
                 "query" : "detailData={\"comic_id\": \"2\", \"title\": \"龙珠 巴达克 AFTER\"}"
@@ -116,11 +146,11 @@
                 "path" : "pages/comic-info/comic-info",
                 "query" : "detailData={\"comic_id\":\"6\",\"title\":\"21世纪大地震\"}"
             },
-			{
-			    "name" : "comic-detail",
-			    "path" : "pages/comic-detail/comic-detail",
-			    "query" : "detailData={\"comic_id\":\"1\",\"title\":\"龙珠 巴达克 AFTER\",\"chapter\":\"1\",\"cover\":\"http://comic.ineinv.com/Uploads/image/2018-11-26/5bfb5576c876a.jpg\"}"
-			},
+            {
+                "name" : "comic-detail",
+                "path" : "pages/comic-detail/comic-detail",
+                "query" : "detailData={\"comic_id\":\"1\",\"title\":\"龙珠 巴达克 AFTER\",\"chapter\":\"1\",\"cover\":\"http://comic.ineinv.com/Uploads/image/2018-11-26/5bfb5576c876a.jpg\"}"
+            },
             {
                 "name" : "gather-detail",
                 "path" : "pages/gather-detail/gather-detail",
